@@ -1,0 +1,128 @@
+syntax = "proto3";
+
+message Entry {
+    string value = 1;
+    string table_name = 2;
+    string key_name = 3;
+    string key_value = 4;
+    bool sort = 5;
+}
+
+message TableHeader {
+    repeated string keys = 1;
+    string name = 2;
+}
+
+message KeyValue {
+    string name = 1;
+    string value = 2;
+}
+
+message CreateTableRequest {
+    TableHeader table = 1;
+}
+
+message CreateTableResponse {
+
+}
+
+message DeleteTableRequest {
+    string table_name = 1;
+}
+
+message DeleteTableResponse {
+
+}
+
+message GetSeqEntryRequest {
+    string table_name = 1;
+    string key_name = 2;
+    bool sort = 3;
+}
+
+message GetSeqEntryResponse {
+    Entry entry = 1;
+}
+
+message GetEntryRequest {
+    string table_name = 1;
+    string key_name = 2;
+    string key_value = 3;
+}
+
+message GetEntryResponse {
+    Entry entry = 1;
+}
+
+message GetNextEntryRequest {
+    Entry entry = 1;
+}
+
+message GetNextEntryResponse {
+    Entry next_entry = 1;
+}
+
+message GetPrevEntryRequest {
+    Entry entry = 1;
+}
+
+message GetPrevEntryResponse {
+    Entry prev_entry = 1;
+}
+
+message AddEntryRequest {
+    repeated KeyValue keys = 1;
+    string value = 2;
+}
+
+message AddEntryResponse {
+
+}
+
+message DeleteCurrentEntryRequest {
+    Entry entry = 1;
+}
+
+message DeleteCurrentEntryResponse {
+    
+}
+
+service DBInterface {
+
+    rpc CreateTable (CreateTableRequest) returns (CreateTableResponse) {
+
+    }
+
+    rpc DeleteTable (DeleteTableRequest) returns (DeleteTableResponse) {
+
+    }
+
+    rpc GetFirstEntry (GetSeqEntryRequest) returns (GetSeqEntryResponse) {
+
+    }
+    
+    rpc GetLastEntry (GetSeqEntryRequest) returns (GetSeqEntryResponse) {
+
+    }
+
+    rpc GetEntry (GetEntryRequest) returns (GetEntryResponse) {
+
+    }
+
+    rpc GetNextEntry (GetNextEntryRequest) returns (GetNextEntryRequest) {
+
+    }
+
+    rpc GetPrevEntry (GetPrevEntryRequest) returns (GetPrevEntryRequest) {
+
+    }
+
+    rpc AddEntry (AddEntryRequest) returns (AddEntryResponse) {
+        
+    }
+
+    rpc DeleteCurrentEntry (DeleteCurrentEntryRequest) returns (DeleteCurrentEntryResponse) {
+
+    }
+
+}
