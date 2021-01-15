@@ -7,7 +7,7 @@ public:
 	DatabaseInterface(){}
 	virtual ~DatabaseInterface(){}
 
-	virtual bool CreateTable(std::string name, std::string* keys) = 0;
+	virtual bool CreateTable(std::string name, std::vector<std::string> keys) = 0;
 	virtual bool DeleteTable(std::string name) = 0;
 
 	virtual Entry GetFirstEntry(std::string name, std::string key_name) = 0;
@@ -17,7 +17,7 @@ public:
 	virtual Entry GetNextEntry(Entry entry) = 0;
 	virtual Entry GetPrevEntry(Entry entry) = 0;
 
-	virtual bool AddEntry(KeyValue* keys, std::string value) = 0;
+	virtual bool AddEntry(std::string table_name, std::vector<KeyValue> keys, std::string value) = 0;
 	virtual bool DeleteCurrentEntry(Entry entry) = 0;
 };
 
@@ -25,7 +25,7 @@ class DatabaseStub : public DatabaseInterface {
 	public:
 
 	// Inherited via DatabaseInterface
-	bool CreateTable(std::string name, std::string* keys) override
+	bool CreateTable(std::string name, std::vector<std::string> keys) override
 	{
 		return false;
 	}
@@ -54,7 +54,7 @@ class DatabaseStub : public DatabaseInterface {
 	{
 		return Entry();
 	}
-	bool AddEntry(KeyValue* keys, std::string value) override
+	bool AddEntry(std::string table_name, std::vector<KeyValue> keys, std::string value) override
 	{
 		return false;
 	}

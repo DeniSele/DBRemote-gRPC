@@ -71,8 +71,9 @@ message GetPrevEntryResponse {
 }
 
 message AddEntryRequest {
-    repeated KeyValue keys = 1;
-    string value = 2;
+    string table_name = 1;
+    repeated KeyValue keys = 2;
+    string value = 3;
 }
 
 message AddEntryResponse {
@@ -109,11 +110,11 @@ service DBInterface {
 
     }
 
-    rpc GetNextEntry (GetNextEntryRequest) returns (GetNextEntryRequest) {
+    rpc GetNextEntry (GetNextEntryRequest) returns (GetNextEntryResponse) {
 
     }
 
-    rpc GetPrevEntry (GetPrevEntryRequest) returns (GetPrevEntryRequest) {
+    rpc GetPrevEntry (GetPrevEntryRequest) returns (GetPrevEntryResponse) {
 
     }
 

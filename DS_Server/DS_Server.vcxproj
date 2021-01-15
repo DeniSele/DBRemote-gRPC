@@ -143,6 +143,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Database.cpp" />
+    <ClCompile Include="DatabaseInterface.cpp" />
     <ClCompile Include="DS_Server.cpp" />
     <ClCompile Include="service.grpc.pb.cc" />
     <ClCompile Include="service.pb.cc" />

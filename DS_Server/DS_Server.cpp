@@ -1,8 +1,7 @@
 #include <iostream>
-
-#include <iostream>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include <grpcpp/grpcpp.h>
 #include <grpcpp/health_check_service_interface.h>
@@ -25,13 +24,14 @@ class DBServiceImpl final : public DBInterface::Service {
         int keys_count = request->table().keys().size();
         std::string table_name = request->table().name();
 
-        std::string* keys = new std::string[keys_count];
+        std::vector<std::string> keys;
         for (int i = 0; i < keys_count; i++) {
-            keys[i] = request->table().keys().Get(i);
+            keys.push_back(request->table().keys().Get(i));
         }
 
         bool result = database->CreateTable(table_name, keys);
-        return result ? Status::OK : Status::CANCELLED;
+        
+        return result ? Status::OK : Status::Status(grpc::StatusCode::NOT_FOUND, "keker-chebureker");
     }
 
     Status DeleteTable(::grpc::ServerContext* context, const ::DeleteTableRequest* request,
@@ -101,9 +101,9 @@ class DBServiceImpl final : public DBInterface::Service {
         std::string value = request->value();
 
         int keys_count = request->keys().size();
-        KeyValue* keys = new KeyValue[keys_count];
+        std::vector<KeyValue> keys;
         for (int i = 0; i < keys_count; i++) {
-            keys[i] = request->keys().Get(i);
+            keys.push_back(request->keys().Get(i));
         }
 
         bool result = database->AddEntry(keys, value);

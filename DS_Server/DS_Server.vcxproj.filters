@@ -24,6 +24,12 @@
     <ClCompile Include="service.pb.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DatabaseInterface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Database.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="service.proto">
