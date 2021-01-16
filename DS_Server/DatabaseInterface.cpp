@@ -1,6 +1,6 @@
 #include <string>
 
-#include "service.grpc.pb.h";
+#include "service.grpc.pb.h"
 
 class DatabaseInterface {
 public:

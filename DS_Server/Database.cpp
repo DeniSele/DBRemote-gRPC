@@ -18,6 +18,7 @@ class Database : public DatabaseInterface {
 
 		// index:value
 		std::map<int, std::string> main_table;
+		std::map<int, std::vector<std::pair<std::string, std::string>>> main_keys_table;
 
 		// key_name: hash_table<key_value, indexes>
 		std::map<std::string, std::map<std::string, std::vector<int>>> keys_map;
@@ -40,6 +41,7 @@ class Database : public DatabaseInterface {
 			}
 
 			errorEntry.set_value("Error");
+			errorEntry.set_table_name("Error message");
 
 			errorIndexedEntry.index = -1;
 			errorIndexedEntry.entry = errorEntry;
@@ -51,7 +53,7 @@ class Database : public DatabaseInterface {
 				return GetEntrySorted(true, key_name);
 			}
 
-			error_message = "Error. No key found with name [" + key_name + "]";
+			errorEntry.set_table_name("Error. No key found with name [" + key_name + "]");
 			return errorEntry;
 		}
 
@@ -61,15 +63,15 @@ class Database : public DatabaseInterface {
 				return GetEntrySorted(false, key_name);
 			}
 
-			error_message = "Error. No key found with name [" + key_name + "]";
+			errorEntry.set_table_name("Error. No key found with name [" + key_name + "]");
 			return errorEntry;
 		}
-
 
 		Entry GetEntry(std::string key_name, std::string key_value) {
 			return GetIndexedEntry(key_name, key_value).entry;
 		}
 
+		// Rework this after adding global index to Entry
 		Entry GetNextEntry(Entry entry) {
 			if (HasKey(entry.key_name())) {
 				auto iterator = keys_map[entry.key_name()].find(entry.key_value());
@@ -85,15 +87,15 @@ class Database : public DatabaseInterface {
 					return ReturnIndexedEntry(index, value, entry.key_name(), key_value, true).entry;
 				}
 
-				error_message = "Error. No key value found with key [" + entry.key_value() + "]";
+				errorEntry.set_table_name("Error. No key value found with key [" + entry.key_value() + "]");
 				return errorEntry;
 			}
 
-			error_message = "Error. No key found with name [" + entry.key_name() + "]";
+			errorEntry.set_table_name("Error. No key found with name [" + entry.key_name() + "]");
 			return errorEntry;
 		}
 
-
+		// Rework this after adding global index to Entry
 		Entry GetPrevEntry(Entry entry) {
 			if (HasKey(entry.key_name())) {
 				auto iterator = keys_map[entry.key_name()].find(entry.key_value());
@@ -109,23 +111,27 @@ class Database : public DatabaseInterface {
 					return ReturnIndexedEntry(index, value, entry.key_name(), key_value, true).entry;
 				}
 
-				error_message = "Error. No key value found with key [" + entry.key_value() + "]";
+				errorEntry.set_table_name("Error. No key value found with key [" + entry.key_value() + "]");
 				return errorEntry;
 			}
 
-			error_message = "Error. No key found with name [" + entry.key_name() + "]";
+			errorEntry.set_table_name("Error. No key found with name [" + entry.key_name() + "]");
 			return errorEntry;
 		}
 
 		bool CreateEntry(std::vector<KeyValue> keys, std::string value) {
 			main_table[global_index] = value;
+			main_keys_table[global_index] = std::vector<std::pair<std::string, std::string>>();
 			for (KeyValue key_pair : keys) {
 				if (!HasKey(key_pair.name())) {
 					error_message = "Error. No key found with name [" + key_pair.name() + "]";
 					return false;
 				}
-				keys_map[key_pair.name()][key_pair.value()] = std::vector<int>();
+				if (keys_map[key_pair.name()].find(key_pair.value()) == keys_map[key_pair.name()].end()) {
+					keys_map[key_pair.name()][key_pair.value()] = std::vector<int>();
+				}
 				keys_map[key_pair.name()][key_pair.value()].push_back(global_index);
+				main_keys_table[global_index].push_back(std::make_pair(key_pair.name(), key_pair.value()));
 			}
 			global_index++;
 			return true;
@@ -138,7 +144,21 @@ class Database : public DatabaseInterface {
 			}
 
 			if (keys_map[entry.key_value()].find(entry.key_name()) != keys_map[entry.key_value()].end()) {
-				//erase from main_table, (remove from keys?)
+				IndexedEntry entryToDelete = GetIndexedEntry(entry.key_name(), entry.key_value());
+				main_table.erase(entryToDelete.index);
+				for (std::pair<std::string, std::string> key_pair : main_keys_table[entryToDelete.index]) {
+					std::vector<int> indexes = keys_map[key_pair.first][key_pair.second];
+					indexes.erase(std::remove(indexes.begin(), indexes.end(), entryToDelete.index), indexes.end());
+					
+					if (indexes.size() == 0) {
+						keys_map[key_pair.first].erase(key_pair.second);
+					}
+					else {
+						keys_map[key_pair.first][key_pair.second] = indexes;
+					}
+				}
+
+				return true;
 			}
 
 			error_message = "Error. No key value found with name [" + entry.key_name() + "]";
@@ -155,15 +175,15 @@ class Database : public DatabaseInterface {
 						return ReturnIndexedEntry(index, value, key_name, key_value, true);
 					}
 
-					error_message = "Error. No value found with key name [" + key_value + "]";
+					errorIndexedEntry.entry.set_table_name("Error. No value found with key name [" + key_value + "]");
 					return errorIndexedEntry;
 				}
 
-				error_message = "Error. No key value found with key [" + key_value + "]";
+				errorIndexedEntry.entry.set_table_name("Error. No key value found with key [" + key_value + "]");
 				return errorIndexedEntry;
 			}
 
-			error_message = "Error. No key found with name [" + key_name + "]";
+			errorIndexedEntry.entry.set_table_name("Error. No key found with name [" + key_name + "]");
 			return errorIndexedEntry;
 		}
 
@@ -174,7 +194,7 @@ class Database : public DatabaseInterface {
 			}
 
 			if (keys_values.empty()) {
-				error_message = "Error. No keys values found with key [" + key_name + "]";
+				errorEntry.set_table_name("Error. No keys values found with key [" + key_name + "]");
 				return errorEntry;
 			}
 

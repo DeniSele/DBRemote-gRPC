@@ -7,7 +7,7 @@
 #include <grpcpp/health_check_service_interface.h>
 #include <grpcpp/ext/proto_server_reflection_plugin.h>
 
-#include "service.grpc.pb.h";
+#include "service.grpc.pb.h"
 #include "DatabaseInterface.cpp"
 
 using grpc::Server;
@@ -51,8 +51,8 @@ class DBServiceImpl final : public DBInterface::Service {
         
         Entry entry = database->GetFirstEntry(table_name, key_name);
         response->set_allocated_entry(&entry);
-
-        return Status::OK;
+        return entry.value() != "Error" ? 
+            Status::OK : Status::Status(grpc::StatusCode::ABORTED, entry.table_name());
     }
 
     Status GetLastEntry(::grpc::ServerContext* context, const ::GetSeqEntryRequest* request,
@@ -63,7 +63,8 @@ class DBServiceImpl final : public DBInterface::Service {
         Entry entry = database->GetLastEntry(table_name, key_name);
         response->set_allocated_entry(&entry);
 
-        return Status::OK;
+        return entry.value() != "Error" ?
+            Status::OK : Status::Status(grpc::StatusCode::ABORTED, entry.table_name());
     }
 
     Status GetEntry(::grpc::ServerContext* context, const ::GetEntryRequest* request,
@@ -75,38 +76,41 @@ class DBServiceImpl final : public DBInterface::Service {
         Entry entry = database->GetEntry(table_name, key_name, key_value);
         response->set_allocated_entry(&entry);
 
-        return Status::OK;
+        return entry.value() != "Error" ?
+            Status::OK : Status::Status(grpc::StatusCode::ABORTED, entry.table_name());
     }
 
     Status GetNextEntry(::grpc::ServerContext* context, const ::GetNextEntryRequest* request,
-        ::GetNextEntryRequest* response) override {
+        ::GetNextEntryResponse* response) override {
         Entry entry = request->entry();
         Entry entry_next = database->GetNextEntry(entry);
-        response->set_allocated_entry(&entry_next);
+        response->set_allocated_next_entry(&entry_next);
 
-        return Status::OK;
+        return entry.value() != "Error" ?
+            Status::OK : Status::Status(grpc::StatusCode::ABORTED, entry.table_name());
     }
 
     Status GetPrevEntry(::grpc::ServerContext* context, const ::GetPrevEntryRequest* request,
-        ::GetPrevEntryRequest* response) override {
+        ::GetPrevEntryResponse* response) override {
         Entry entry = request->entry();
         Entry entry_next = database->GetPrevEntry(entry);
-        response->set_allocated_entry(&entry_next);
+        response->set_allocated_prev_entry(&entry_next);
 
-        return Status::OK;
+        return entry.value() != "Error" ?
+            Status::OK : Status::Status(grpc::StatusCode::ABORTED, entry.table_name());
     }
 
     Status AddEntry(::grpc::ServerContext* context, const ::AddEntryRequest* request,
         ::AddEntryResponse* response) override {
         std::string value = request->value();
-
+        std::string table_name = request->table_name();
         int keys_count = request->keys().size();
         std::vector<KeyValue> keys;
         for (int i = 0; i < keys_count; i++) {
             keys.push_back(request->keys().Get(i));
         }
 
-        bool result = database->AddEntry(keys, value);
+        bool result = database->AddEntry(table_name, keys, value);
         return result ? Status::OK : Status::CANCELLED;
     }
 

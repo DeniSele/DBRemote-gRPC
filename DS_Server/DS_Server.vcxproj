@@ -150,11 +150,11 @@
     <ClCompile Include="service.pb.cc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="service.proto" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="service.grpc.pb.h" />
     <ClInclude Include="service.pb.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="service.proto" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

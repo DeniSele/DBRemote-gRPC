@@ -69,19 +69,19 @@ class DBInterface final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::GetEntryResponse>> PrepareAsyncGetEntry(::grpc::ClientContext* context, const ::GetEntryRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::GetEntryResponse>>(PrepareAsyncGetEntryRaw(context, request, cq));
     }
-    virtual ::grpc::Status GetNextEntry(::grpc::ClientContext* context, const ::GetNextEntryRequest& request, ::GetNextEntryRequest* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::GetNextEntryRequest>> AsyncGetNextEntry(::grpc::ClientContext* context, const ::GetNextEntryRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::GetNextEntryRequest>>(AsyncGetNextEntryRaw(context, request, cq));
+    virtual ::grpc::Status GetNextEntry(::grpc::ClientContext* context, const ::GetNextEntryRequest& request, ::GetNextEntryResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::GetNextEntryResponse>> AsyncGetNextEntry(::grpc::ClientContext* context, const ::GetNextEntryRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::GetNextEntryResponse>>(AsyncGetNextEntryRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::GetNextEntryRequest>> PrepareAsyncGetNextEntry(::grpc::ClientContext* context, const ::GetNextEntryRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::GetNextEntryRequest>>(PrepareAsyncGetNextEntryRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::GetNextEntryResponse>> PrepareAsyncGetNextEntry(::grpc::ClientContext* context, const ::GetNextEntryRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::GetNextEntryResponse>>(PrepareAsyncGetNextEntryRaw(context, request, cq));
     }
-    virtual ::grpc::Status GetPrevEntry(::grpc::ClientContext* context, const ::GetPrevEntryRequest& request, ::GetPrevEntryRequest* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::GetPrevEntryRequest>> AsyncGetPrevEntry(::grpc::ClientContext* context, const ::GetPrevEntryRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::GetPrevEntryRequest>>(AsyncGetPrevEntryRaw(context, request, cq));
+    virtual ::grpc::Status GetPrevEntry(::grpc::ClientContext* context, const ::GetPrevEntryRequest& request, ::GetPrevEntryResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::GetPrevEntryResponse>> AsyncGetPrevEntry(::grpc::ClientContext* context, const ::GetPrevEntryRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::GetPrevEntryResponse>>(AsyncGetPrevEntryRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::GetPrevEntryRequest>> PrepareAsyncGetPrevEntry(::grpc::ClientContext* context, const ::GetPrevEntryRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::GetPrevEntryRequest>>(PrepareAsyncGetPrevEntryRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::GetPrevEntryResponse>> PrepareAsyncGetPrevEntry(::grpc::ClientContext* context, const ::GetPrevEntryRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::GetPrevEntryResponse>>(PrepareAsyncGetPrevEntryRaw(context, request, cq));
     }
     virtual ::grpc::Status AddEntry(::grpc::ClientContext* context, const ::AddEntryRequest& request, ::AddEntryResponse* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::AddEntryResponse>> AsyncAddEntry(::grpc::ClientContext* context, const ::AddEntryRequest& request, ::grpc::CompletionQueue* cq) {
@@ -130,17 +130,17 @@ class DBInterface final {
       #else
       virtual void GetEntry(::grpc::ClientContext* context, const ::GetEntryRequest* request, ::GetEntryResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
-      virtual void GetNextEntry(::grpc::ClientContext* context, const ::GetNextEntryRequest* request, ::GetNextEntryRequest* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void GetNextEntry(::grpc::ClientContext* context, const ::GetNextEntryRequest* request, ::GetNextEntryResponse* response, std::function<void(::grpc::Status)>) = 0;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void GetNextEntry(::grpc::ClientContext* context, const ::GetNextEntryRequest* request, ::GetNextEntryRequest* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void GetNextEntry(::grpc::ClientContext* context, const ::GetNextEntryRequest* request, ::GetNextEntryResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
-      virtual void GetNextEntry(::grpc::ClientContext* context, const ::GetNextEntryRequest* request, ::GetNextEntryRequest* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void GetNextEntry(::grpc::ClientContext* context, const ::GetNextEntryRequest* request, ::GetNextEntryResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
-      virtual void GetPrevEntry(::grpc::ClientContext* context, const ::GetPrevEntryRequest* request, ::GetPrevEntryRequest* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void GetPrevEntry(::grpc::ClientContext* context, const ::GetPrevEntryRequest* request, ::GetPrevEntryResponse* response, std::function<void(::grpc::Status)>) = 0;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      virtual void GetPrevEntry(::grpc::ClientContext* context, const ::GetPrevEntryRequest* request, ::GetPrevEntryRequest* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void GetPrevEntry(::grpc::ClientContext* context, const ::GetPrevEntryRequest* request, ::GetPrevEntryResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       #else
-      virtual void GetPrevEntry(::grpc::ClientContext* context, const ::GetPrevEntryRequest* request, ::GetPrevEntryRequest* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void GetPrevEntry(::grpc::ClientContext* context, const ::GetPrevEntryRequest* request, ::GetPrevEntryResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
       #endif
       virtual void AddEntry(::grpc::ClientContext* context, const ::AddEntryRequest* request, ::AddEntryResponse* response, std::function<void(::grpc::Status)>) = 0;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -173,10 +173,10 @@ class DBInterface final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::GetSeqEntryResponse>* PrepareAsyncGetLastEntryRaw(::grpc::ClientContext* context, const ::GetSeqEntryRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::GetEntryResponse>* AsyncGetEntryRaw(::grpc::ClientContext* context, const ::GetEntryRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::GetEntryResponse>* PrepareAsyncGetEntryRaw(::grpc::ClientContext* context, const ::GetEntryRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::GetNextEntryRequest>* AsyncGetNextEntryRaw(::grpc::ClientContext* context, const ::GetNextEntryRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::GetNextEntryRequest>* PrepareAsyncGetNextEntryRaw(::grpc::ClientContext* context, const ::GetNextEntryRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::GetPrevEntryRequest>* AsyncGetPrevEntryRaw(::grpc::ClientContext* context, const ::GetPrevEntryRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::GetPrevEntryRequest>* PrepareAsyncGetPrevEntryRaw(::grpc::ClientContext* context, const ::GetPrevEntryRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::GetNextEntryResponse>* AsyncGetNextEntryRaw(::grpc::ClientContext* context, const ::GetNextEntryRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::GetNextEntryResponse>* PrepareAsyncGetNextEntryRaw(::grpc::ClientContext* context, const ::GetNextEntryRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::GetPrevEntryResponse>* AsyncGetPrevEntryRaw(::grpc::ClientContext* context, const ::GetPrevEntryRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::GetPrevEntryResponse>* PrepareAsyncGetPrevEntryRaw(::grpc::ClientContext* context, const ::GetPrevEntryRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::AddEntryResponse>* AsyncAddEntryRaw(::grpc::ClientContext* context, const ::AddEntryRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::AddEntryResponse>* PrepareAsyncAddEntryRaw(::grpc::ClientContext* context, const ::AddEntryRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::DeleteCurrentEntryResponse>* AsyncDeleteCurrentEntryRaw(::grpc::ClientContext* context, const ::DeleteCurrentEntryRequest& request, ::grpc::CompletionQueue* cq) = 0;
@@ -220,19 +220,19 @@ class DBInterface final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::GetEntryResponse>> PrepareAsyncGetEntry(::grpc::ClientContext* context, const ::GetEntryRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::GetEntryResponse>>(PrepareAsyncGetEntryRaw(context, request, cq));
     }
-    ::grpc::Status GetNextEntry(::grpc::ClientContext* context, const ::GetNextEntryRequest& request, ::GetNextEntryRequest* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::GetNextEntryRequest>> AsyncGetNextEntry(::grpc::ClientContext* context, const ::GetNextEntryRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::GetNextEntryRequest>>(AsyncGetNextEntryRaw(context, request, cq));
+    ::grpc::Status GetNextEntry(::grpc::ClientContext* context, const ::GetNextEntryRequest& request, ::GetNextEntryResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::GetNextEntryResponse>> AsyncGetNextEntry(::grpc::ClientContext* context, const ::GetNextEntryRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::GetNextEntryResponse>>(AsyncGetNextEntryRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::GetNextEntryRequest>> PrepareAsyncGetNextEntry(::grpc::ClientContext* context, const ::GetNextEntryRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::GetNextEntryRequest>>(PrepareAsyncGetNextEntryRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::GetNextEntryResponse>> PrepareAsyncGetNextEntry(::grpc::ClientContext* context, const ::GetNextEntryRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::GetNextEntryResponse>>(PrepareAsyncGetNextEntryRaw(context, request, cq));
     }
-    ::grpc::Status GetPrevEntry(::grpc::ClientContext* context, const ::GetPrevEntryRequest& request, ::GetPrevEntryRequest* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::GetPrevEntryRequest>> AsyncGetPrevEntry(::grpc::ClientContext* context, const ::GetPrevEntryRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::GetPrevEntryRequest>>(AsyncGetPrevEntryRaw(context, request, cq));
+    ::grpc::Status GetPrevEntry(::grpc::ClientContext* context, const ::GetPrevEntryRequest& request, ::GetPrevEntryResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::GetPrevEntryResponse>> AsyncGetPrevEntry(::grpc::ClientContext* context, const ::GetPrevEntryRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::GetPrevEntryResponse>>(AsyncGetPrevEntryRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::GetPrevEntryRequest>> PrepareAsyncGetPrevEntry(::grpc::ClientContext* context, const ::GetPrevEntryRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::GetPrevEntryRequest>>(PrepareAsyncGetPrevEntryRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::GetPrevEntryResponse>> PrepareAsyncGetPrevEntry(::grpc::ClientContext* context, const ::GetPrevEntryRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::GetPrevEntryResponse>>(PrepareAsyncGetPrevEntryRaw(context, request, cq));
     }
     ::grpc::Status AddEntry(::grpc::ClientContext* context, const ::AddEntryRequest& request, ::AddEntryResponse* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::AddEntryResponse>> AsyncAddEntry(::grpc::ClientContext* context, const ::AddEntryRequest& request, ::grpc::CompletionQueue* cq) {
@@ -281,17 +281,17 @@ class DBInterface final {
       #else
       void GetEntry(::grpc::ClientContext* context, const ::GetEntryRequest* request, ::GetEntryResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
-      void GetNextEntry(::grpc::ClientContext* context, const ::GetNextEntryRequest* request, ::GetNextEntryRequest* response, std::function<void(::grpc::Status)>) override;
+      void GetNextEntry(::grpc::ClientContext* context, const ::GetNextEntryRequest* request, ::GetNextEntryResponse* response, std::function<void(::grpc::Status)>) override;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void GetNextEntry(::grpc::ClientContext* context, const ::GetNextEntryRequest* request, ::GetNextEntryRequest* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void GetNextEntry(::grpc::ClientContext* context, const ::GetNextEntryRequest* request, ::GetNextEntryResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
-      void GetNextEntry(::grpc::ClientContext* context, const ::GetNextEntryRequest* request, ::GetNextEntryRequest* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void GetNextEntry(::grpc::ClientContext* context, const ::GetNextEntryRequest* request, ::GetNextEntryResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
-      void GetPrevEntry(::grpc::ClientContext* context, const ::GetPrevEntryRequest* request, ::GetPrevEntryRequest* response, std::function<void(::grpc::Status)>) override;
+      void GetPrevEntry(::grpc::ClientContext* context, const ::GetPrevEntryRequest* request, ::GetPrevEntryResponse* response, std::function<void(::grpc::Status)>) override;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
-      void GetPrevEntry(::grpc::ClientContext* context, const ::GetPrevEntryRequest* request, ::GetPrevEntryRequest* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void GetPrevEntry(::grpc::ClientContext* context, const ::GetPrevEntryRequest* request, ::GetPrevEntryResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       #else
-      void GetPrevEntry(::grpc::ClientContext* context, const ::GetPrevEntryRequest* request, ::GetPrevEntryRequest* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void GetPrevEntry(::grpc::ClientContext* context, const ::GetPrevEntryRequest* request, ::GetPrevEntryResponse* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
       #endif
       void AddEntry(::grpc::ClientContext* context, const ::AddEntryRequest* request, ::AddEntryResponse* response, std::function<void(::grpc::Status)>) override;
       #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
@@ -326,10 +326,10 @@ class DBInterface final {
     ::grpc::ClientAsyncResponseReader< ::GetSeqEntryResponse>* PrepareAsyncGetLastEntryRaw(::grpc::ClientContext* context, const ::GetSeqEntryRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::GetEntryResponse>* AsyncGetEntryRaw(::grpc::ClientContext* context, const ::GetEntryRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::GetEntryResponse>* PrepareAsyncGetEntryRaw(::grpc::ClientContext* context, const ::GetEntryRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::GetNextEntryRequest>* AsyncGetNextEntryRaw(::grpc::ClientContext* context, const ::GetNextEntryRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::GetNextEntryRequest>* PrepareAsyncGetNextEntryRaw(::grpc::ClientContext* context, const ::GetNextEntryRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::GetPrevEntryRequest>* AsyncGetPrevEntryRaw(::grpc::ClientContext* context, const ::GetPrevEntryRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::GetPrevEntryRequest>* PrepareAsyncGetPrevEntryRaw(::grpc::ClientContext* context, const ::GetPrevEntryRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::GetNextEntryResponse>* AsyncGetNextEntryRaw(::grpc::ClientContext* context, const ::GetNextEntryRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::GetNextEntryResponse>* PrepareAsyncGetNextEntryRaw(::grpc::ClientContext* context, const ::GetNextEntryRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::GetPrevEntryResponse>* AsyncGetPrevEntryRaw(::grpc::ClientContext* context, const ::GetPrevEntryRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::GetPrevEntryResponse>* PrepareAsyncGetPrevEntryRaw(::grpc::ClientContext* context, const ::GetPrevEntryRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::AddEntryResponse>* AsyncAddEntryRaw(::grpc::ClientContext* context, const ::AddEntryRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::AddEntryResponse>* PrepareAsyncAddEntryRaw(::grpc::ClientContext* context, const ::AddEntryRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::DeleteCurrentEntryResponse>* AsyncDeleteCurrentEntryRaw(::grpc::ClientContext* context, const ::DeleteCurrentEntryRequest& request, ::grpc::CompletionQueue* cq) override;
@@ -355,8 +355,8 @@ class DBInterface final {
     virtual ::grpc::Status GetFirstEntry(::grpc::ServerContext* context, const ::GetSeqEntryRequest* request, ::GetSeqEntryResponse* response);
     virtual ::grpc::Status GetLastEntry(::grpc::ServerContext* context, const ::GetSeqEntryRequest* request, ::GetSeqEntryResponse* response);
     virtual ::grpc::Status GetEntry(::grpc::ServerContext* context, const ::GetEntryRequest* request, ::GetEntryResponse* response);
-    virtual ::grpc::Status GetNextEntry(::grpc::ServerContext* context, const ::GetNextEntryRequest* request, ::GetNextEntryRequest* response);
-    virtual ::grpc::Status GetPrevEntry(::grpc::ServerContext* context, const ::GetPrevEntryRequest* request, ::GetPrevEntryRequest* response);
+    virtual ::grpc::Status GetNextEntry(::grpc::ServerContext* context, const ::GetNextEntryRequest* request, ::GetNextEntryResponse* response);
+    virtual ::grpc::Status GetPrevEntry(::grpc::ServerContext* context, const ::GetPrevEntryRequest* request, ::GetPrevEntryResponse* response);
     virtual ::grpc::Status AddEntry(::grpc::ServerContext* context, const ::AddEntryRequest* request, ::AddEntryResponse* response);
     virtual ::grpc::Status DeleteCurrentEntry(::grpc::ServerContext* context, const ::DeleteCurrentEntryRequest* request, ::DeleteCurrentEntryResponse* response);
   };
@@ -472,11 +472,11 @@ class DBInterface final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GetNextEntry(::grpc::ServerContext* /*context*/, const ::GetNextEntryRequest* /*request*/, ::GetNextEntryRequest* /*response*/) override {
+    ::grpc::Status GetNextEntry(::grpc::ServerContext* /*context*/, const ::GetNextEntryRequest* /*request*/, ::GetNextEntryResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestGetNextEntry(::grpc::ServerContext* context, ::GetNextEntryRequest* request, ::grpc::ServerAsyncResponseWriter< ::GetNextEntryRequest>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestGetNextEntry(::grpc::ServerContext* context, ::GetNextEntryRequest* request, ::grpc::ServerAsyncResponseWriter< ::GetNextEntryResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
@@ -492,11 +492,11 @@ class DBInterface final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GetPrevEntry(::grpc::ServerContext* /*context*/, const ::GetPrevEntryRequest* /*request*/, ::GetPrevEntryRequest* /*response*/) override {
+    ::grpc::Status GetPrevEntry(::grpc::ServerContext* /*context*/, const ::GetPrevEntryRequest* /*request*/, ::GetPrevEntryResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestGetPrevEntry(::grpc::ServerContext* context, ::GetPrevEntryRequest* request, ::grpc::ServerAsyncResponseWriter< ::GetPrevEntryRequest>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestGetPrevEntry(::grpc::ServerContext* context, ::GetPrevEntryRequest* request, ::grpc::ServerAsyncResponseWriter< ::GetPrevEntryResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
@@ -788,38 +788,38 @@ class DBInterface final {
       ::grpc::Service::experimental().
     #endif
         MarkMethodCallback(5,
-          new ::grpc::internal::CallbackUnaryHandler< ::GetNextEntryRequest, ::GetNextEntryRequest>(
+          new ::grpc::internal::CallbackUnaryHandler< ::GetNextEntryRequest, ::GetNextEntryResponse>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, const ::GetNextEntryRequest* request, ::GetNextEntryRequest* response) { return this->GetNextEntry(context, request, response); }));}
+                     context, const ::GetNextEntryRequest* request, ::GetNextEntryResponse* response) { return this->GetNextEntry(context, request, response); }));}
     void SetMessageAllocatorFor_GetNextEntry(
-        ::grpc::experimental::MessageAllocator< ::GetNextEntryRequest, ::GetNextEntryRequest>* allocator) {
+        ::grpc::experimental::MessageAllocator< ::GetNextEntryRequest, ::GetNextEntryResponse>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(5);
     #else
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(5);
     #endif
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::GetNextEntryRequest, ::GetNextEntryRequest>*>(handler)
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::GetNextEntryRequest, ::GetNextEntryResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
     ~ExperimentalWithCallbackMethod_GetNextEntry() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GetNextEntry(::grpc::ServerContext* /*context*/, const ::GetNextEntryRequest* /*request*/, ::GetNextEntryRequest* /*response*/) override {
+    ::grpc::Status GetNextEntry(::grpc::ServerContext* /*context*/, const ::GetNextEntryRequest* /*request*/, ::GetNextEntryResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
     virtual ::grpc::ServerUnaryReactor* GetNextEntry(
-      ::grpc::CallbackServerContext* /*context*/, const ::GetNextEntryRequest* /*request*/, ::GetNextEntryRequest* /*response*/)
+      ::grpc::CallbackServerContext* /*context*/, const ::GetNextEntryRequest* /*request*/, ::GetNextEntryResponse* /*response*/)
     #else
     virtual ::grpc::experimental::ServerUnaryReactor* GetNextEntry(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::GetNextEntryRequest* /*request*/, ::GetNextEntryRequest* /*response*/)
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::GetNextEntryRequest* /*request*/, ::GetNextEntryResponse* /*response*/)
     #endif
       { return nullptr; }
   };
@@ -835,38 +835,38 @@ class DBInterface final {
       ::grpc::Service::experimental().
     #endif
         MarkMethodCallback(6,
-          new ::grpc::internal::CallbackUnaryHandler< ::GetPrevEntryRequest, ::GetPrevEntryRequest>(
+          new ::grpc::internal::CallbackUnaryHandler< ::GetPrevEntryRequest, ::GetPrevEntryResponse>(
             [this](
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
                    ::grpc::CallbackServerContext*
     #else
                    ::grpc::experimental::CallbackServerContext*
     #endif
-                     context, const ::GetPrevEntryRequest* request, ::GetPrevEntryRequest* response) { return this->GetPrevEntry(context, request, response); }));}
+                     context, const ::GetPrevEntryRequest* request, ::GetPrevEntryResponse* response) { return this->GetPrevEntry(context, request, response); }));}
     void SetMessageAllocatorFor_GetPrevEntry(
-        ::grpc::experimental::MessageAllocator< ::GetPrevEntryRequest, ::GetPrevEntryRequest>* allocator) {
+        ::grpc::experimental::MessageAllocator< ::GetPrevEntryRequest, ::GetPrevEntryResponse>* allocator) {
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(6);
     #else
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::experimental().GetHandler(6);
     #endif
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::GetPrevEntryRequest, ::GetPrevEntryRequest>*>(handler)
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::GetPrevEntryRequest, ::GetPrevEntryResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
     ~ExperimentalWithCallbackMethod_GetPrevEntry() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GetPrevEntry(::grpc::ServerContext* /*context*/, const ::GetPrevEntryRequest* /*request*/, ::GetPrevEntryRequest* /*response*/) override {
+    ::grpc::Status GetPrevEntry(::grpc::ServerContext* /*context*/, const ::GetPrevEntryRequest* /*request*/, ::GetPrevEntryResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     #ifdef GRPC_CALLBACK_API_NONEXPERIMENTAL
     virtual ::grpc::ServerUnaryReactor* GetPrevEntry(
-      ::grpc::CallbackServerContext* /*context*/, const ::GetPrevEntryRequest* /*request*/, ::GetPrevEntryRequest* /*response*/)
+      ::grpc::CallbackServerContext* /*context*/, const ::GetPrevEntryRequest* /*request*/, ::GetPrevEntryResponse* /*response*/)
     #else
     virtual ::grpc::experimental::ServerUnaryReactor* GetPrevEntry(
-      ::grpc::experimental::CallbackServerContext* /*context*/, const ::GetPrevEntryRequest* /*request*/, ::GetPrevEntryRequest* /*response*/)
+      ::grpc::experimental::CallbackServerContext* /*context*/, const ::GetPrevEntryRequest* /*request*/, ::GetPrevEntryResponse* /*response*/)
     #endif
       { return nullptr; }
   };
@@ -1066,7 +1066,7 @@ class DBInterface final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GetNextEntry(::grpc::ServerContext* /*context*/, const ::GetNextEntryRequest* /*request*/, ::GetNextEntryRequest* /*response*/) override {
+    ::grpc::Status GetNextEntry(::grpc::ServerContext* /*context*/, const ::GetNextEntryRequest* /*request*/, ::GetNextEntryResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1083,7 +1083,7 @@ class DBInterface final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GetPrevEntry(::grpc::ServerContext* /*context*/, const ::GetPrevEntryRequest* /*request*/, ::GetPrevEntryRequest* /*response*/) override {
+    ::grpc::Status GetPrevEntry(::grpc::ServerContext* /*context*/, const ::GetPrevEntryRequest* /*request*/, ::GetPrevEntryResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1234,7 +1234,7 @@ class DBInterface final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GetNextEntry(::grpc::ServerContext* /*context*/, const ::GetNextEntryRequest* /*request*/, ::GetNextEntryRequest* /*response*/) override {
+    ::grpc::Status GetNextEntry(::grpc::ServerContext* /*context*/, const ::GetNextEntryRequest* /*request*/, ::GetNextEntryResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1254,7 +1254,7 @@ class DBInterface final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GetPrevEntry(::grpc::ServerContext* /*context*/, const ::GetPrevEntryRequest* /*request*/, ::GetPrevEntryRequest* /*response*/) override {
+    ::grpc::Status GetPrevEntry(::grpc::ServerContext* /*context*/, const ::GetPrevEntryRequest* /*request*/, ::GetPrevEntryResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1517,7 +1517,7 @@ class DBInterface final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GetNextEntry(::grpc::ServerContext* /*context*/, const ::GetNextEntryRequest* /*request*/, ::GetNextEntryRequest* /*response*/) override {
+    ::grpc::Status GetNextEntry(::grpc::ServerContext* /*context*/, const ::GetNextEntryRequest* /*request*/, ::GetNextEntryResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1555,7 +1555,7 @@ class DBInterface final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GetPrevEntry(::grpc::ServerContext* /*context*/, const ::GetPrevEntryRequest* /*request*/, ::GetPrevEntryRequest* /*response*/) override {
+    ::grpc::Status GetPrevEntry(::grpc::ServerContext* /*context*/, const ::GetPrevEntryRequest* /*request*/, ::GetPrevEntryResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1787,10 +1787,10 @@ class DBInterface final {
     WithStreamedUnaryMethod_GetNextEntry() {
       ::grpc::Service::MarkMethodStreamed(5,
         new ::grpc::internal::StreamedUnaryHandler<
-          ::GetNextEntryRequest, ::GetNextEntryRequest>(
+          ::GetNextEntryRequest, ::GetNextEntryResponse>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerUnaryStreamer<
-                     ::GetNextEntryRequest, ::GetNextEntryRequest>* streamer) {
+                     ::GetNextEntryRequest, ::GetNextEntryResponse>* streamer) {
                        return this->StreamedGetNextEntry(context,
                          streamer);
                   }));
@@ -1799,12 +1799,12 @@ class DBInterface final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status GetNextEntry(::grpc::ServerContext* /*context*/, const ::GetNextEntryRequest* /*request*/, ::GetNextEntryRequest* /*response*/) override {
+    ::grpc::Status GetNextEntry(::grpc::ServerContext* /*context*/, const ::GetNextEntryRequest* /*request*/, ::GetNextEntryResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedGetNextEntry(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::GetNextEntryRequest,::GetNextEntryRequest>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedGetNextEntry(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::GetNextEntryRequest,::GetNextEntryResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
   class WithStreamedUnaryMethod_GetPrevEntry : public BaseClass {
@@ -1814,10 +1814,10 @@ class DBInterface final {
     WithStreamedUnaryMethod_GetPrevEntry() {
       ::grpc::Service::MarkMethodStreamed(6,
         new ::grpc::internal::StreamedUnaryHandler<
-          ::GetPrevEntryRequest, ::GetPrevEntryRequest>(
+          ::GetPrevEntryRequest, ::GetPrevEntryResponse>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerUnaryStreamer<
-                     ::GetPrevEntryRequest, ::GetPrevEntryRequest>* streamer) {
+                     ::GetPrevEntryRequest, ::GetPrevEntryResponse>* streamer) {
                        return this->StreamedGetPrevEntry(context,
                          streamer);
                   }));
@@ -1826,12 +1826,12 @@ class DBInterface final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status GetPrevEntry(::grpc::ServerContext* /*context*/, const ::GetPrevEntryRequest* /*request*/, ::GetPrevEntryRequest* /*response*/) override {
+    ::grpc::Status GetPrevEntry(::grpc::ServerContext* /*context*/, const ::GetPrevEntryRequest* /*request*/, ::GetPrevEntryResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedGetPrevEntry(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::GetPrevEntryRequest,::GetPrevEntryRequest>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedGetPrevEntry(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::GetPrevEntryRequest,::GetPrevEntryResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
   class WithStreamedUnaryMethod_AddEntry : public BaseClass {
