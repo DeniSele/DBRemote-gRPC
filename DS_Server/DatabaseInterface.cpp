@@ -114,6 +114,7 @@ public:
 	virtual bool DeleteCurrentEntry(Entry entry) = 0;
 };
 
+/*
 class DatabaseStub : public DatabaseInterface {
 	public:
 
@@ -155,4 +156,4 @@ class DatabaseStub : public DatabaseInterface {
 	{
 		return false;
 	}
-};
+};*/

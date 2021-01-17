@@ -39,7 +39,7 @@ TEST(TestCaseName3, TestName3)
 	database->CreateTable("table1", keyss);
 	database->AddEntry("table1", keys, "my_value_1");
 
-    Entry return_entry = database->GetFirstEntry("table1", "key1");
+    Entry return_entry = database->GetFirstEntry("table1", "key1", false);
 
 	Entry entry;
 	entry.set_value("my_value_1");
@@ -73,7 +73,7 @@ TEST(TestCaseName4, TestName4)
 	keys2.push_back(key_value2);
 	database->AddEntry("table1", keys2, "my_value_2");
 
-	Entry return_entry = database->GetLastEntry("table1", "key1");
+	Entry return_entry = database->GetFirstEntry("table1", "key1", true);
 
 	Entry entry;
 	entry.set_value("my_value_2");

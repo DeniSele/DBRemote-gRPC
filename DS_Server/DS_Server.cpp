@@ -48,8 +48,9 @@ class DBServiceImpl final : public DBInterface::Service {
 
         std::string table_name = request->table_name();
         std::string key_name = request->key_name();
+        bool sort = request->sort();
         
-        Entry entry = database->GetFirstEntry(table_name, key_name);
+        Entry entry = database->GetFirstEntry(table_name, key_name, sort);
         response->mutable_entry()->set_global_index(entry.global_index());
         response->mutable_entry()->set_value(entry.value());
         response->mutable_entry()->set_key_name(entry.key_name());
@@ -64,8 +65,9 @@ class DBServiceImpl final : public DBInterface::Service {
         ::GetSeqEntryResponse* response) override {
         std::string table_name = request->table_name();
         std::string key_name = request->key_name();
+        bool sort = request->sort();
 
-        Entry entry = database->GetLastEntry(table_name, key_name);
+        Entry entry = database->GetLastEntry(table_name, key_name, sort);
         response->mutable_entry()->set_global_index(entry.global_index());
         response->mutable_entry()->set_value(entry.value());
         response->mutable_entry()->set_key_name(entry.key_name());
