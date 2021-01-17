@@ -313,7 +313,6 @@ public:
 
 	Entry GetPrevEntry(Entry entry) override
 	{
-		entry.set_sort(!entry.sort());
 		return entry.sort() ? tables[entry.table_name()].GetNextEntry(entry) : tables[entry.table_name()].GetPrevEntry(entry);
 	}
 
