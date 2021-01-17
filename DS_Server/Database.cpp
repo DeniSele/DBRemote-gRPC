@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "DatabaseInterface.cpp"
+#include <algorithm>
 
 class Database : public DatabaseInterface {
 
@@ -30,6 +31,7 @@ class Database : public DatabaseInterface {
 		int global_index;
 
 	public:
+		Table() { };
 		Table(std::string name, std::vector<std::string> keys)
 		{
 			table_name = name;
@@ -71,11 +73,22 @@ class Database : public DatabaseInterface {
 			return GetIndexedEntry(key_name, key_value).entry;
 		}
 
-		// Rework this after adding global index to Entry
 		Entry GetNextEntry(Entry entry) {
 			if (HasKey(entry.key_name())) {
 				auto iterator = keys_map[entry.key_name()].find(entry.key_value());
 				if (iterator != keys_map[entry.key_name()].end()) {
+					
+					//Check same key names first
+					if ((*iterator).second.size() > 1) {
+						std::vector<int> indexes = (*iterator).second;
+						if (indexes[indexes.size() - 1] != entry.global_index()) {
+							auto itemIndex = std::find(indexes.begin(), indexes.end(), entry.global_index());
+							itemIndex++;
+							int new_index = (*itemIndex);
+							return ReturnIndexedEntry(new_index, main_table[new_index], entry.key_name(), entry.key_value(), true).entry;
+						}
+					}
+
 					iterator++;
 					if (iterator == keys_map[entry.key_name()].end())
 						iterator = keys_map[entry.key_name()].begin();
@@ -95,11 +108,22 @@ class Database : public DatabaseInterface {
 			return errorEntry;
 		}
 
-		// Rework this after adding global index to Entry
 		Entry GetPrevEntry(Entry entry) {
 			if (HasKey(entry.key_name())) {
 				auto iterator = keys_map[entry.key_name()].find(entry.key_value());
 				if (iterator != keys_map[entry.key_name()].end()) {
+
+					//Check same key names first
+					if ((*iterator).second.size() > 1) {
+						std::vector<int> indexes = (*iterator).second;
+						if (indexes[0] != entry.global_index()) {
+							auto itemIndex = std::find(indexes.begin(), indexes.end(), entry.global_index());
+							itemIndex--;
+							int new_index = (*itemIndex);
+							return ReturnIndexedEntry(new_index, main_table[new_index], entry.key_name(), entry.key_value(), true).entry;
+						}
+					}
+
 					if (iterator == keys_map[entry.key_name()].begin())
 						iterator = keys_map[entry.key_name()].end();
 					iterator--;

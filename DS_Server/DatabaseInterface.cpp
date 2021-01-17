@@ -1,6 +1,73 @@
 #include <string>
-
+#include <vector>
 #include "service.grpc.pb.h"
+
+/*
+class Entry {
+private:
+	std::string _key_value;
+	std::string _key_name;
+	std::string _value;
+	std::string _table_name;
+	bool _sort = false;
+
+public:
+	void set_value(std::string val) {
+		_value = val;
+	}
+
+	void set_table_name(std::string val) {
+		_table_name = val;
+	}
+
+	void set_key_name(std::string val) {
+		_key_name = val;
+	}
+
+	void set_key_value(std::string val) {
+		_key_name = val;
+	}
+
+	void set_sort(bool val) {
+		_sort = val;
+	}
+
+	std::string value() {
+		return _value;
+	}
+
+	std::string table_name() {
+		return _table_name;
+	}
+
+	std::string key_name() {
+		return _key_name;
+	}
+
+	std::string key_value() {
+		return _key_name;
+	}
+
+	bool sort() {
+		return _sort;
+	}
+};
+
+class KeyValue {
+private:
+	std::string _name;
+	std::string _value;
+
+public:
+	std::string name() {
+		return _name;
+	}
+
+	std::string value() {
+		return _value;
+	}
+};
+*/
 
 class DatabaseInterface {
 public:
