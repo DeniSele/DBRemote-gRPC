@@ -287,22 +287,23 @@ public:
 		return true;
 	}
 
-	Entry GetFirstEntry(std::string name, std::string key_name) override
+	Entry GetFirstEntry(std::string name, std::string key_name, bool sort_order) override
 	{
 		if (!HasTable(name)) {
 			error_message = "Error. Table was not found.";
 			return error_entry;
 		}
-		return tables[name].GetFirstEntry(key_name);
+
+		return sort_order ? tables[name].GetLastEntry(key_name) : tables[name].GetFirstEntry(key_name);
 	}
 
-	Entry GetLastEntry(std::string name, std::string key_name) override
+	Entry GetLastEntry(std::string name, std::string key_name, bool sort_order) override
 	{
 		if (!HasTable(name)) {
 			error_message = "Error. Table was not found.";
 			return error_entry;
 		}
-		return tables[name].GetLastEntry(key_name);
+		return sort_order ? tables[name].GetFirstEntry(key_name) : tables[name].GetLastEntry(key_name);
 	}
 
 	Entry GetEntry(std::string name, std::string key_name, std::string key_value) override

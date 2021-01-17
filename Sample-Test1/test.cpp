@@ -52,3 +52,37 @@ TEST(TestCaseName3, TestName3)
 
 	EXPECT_EQ(true, result);
 }
+
+TEST(TestCaseName4, TestName4)
+{
+	DatabaseInterface* database = new Database();
+	vector<string> keyss{ "key1", "key2" };
+	database->CreateTable("table1", keyss);
+
+	vector<KeyValue> keys;
+	KeyValue key_value;
+	key_value.set_name("key1");
+	key_value.set_value("value1_1");
+	keys.push_back(key_value);
+	database->AddEntry("table1", keys, "my_value_1");
+
+	vector<KeyValue> keys2;
+	KeyValue key_value2;
+	key_value2.set_name("key1");
+	key_value2.set_value("value1_2");
+	keys2.push_back(key_value2);
+	database->AddEntry("table1", keys2, "my_value_2");
+
+	Entry return_entry = database->GetLastEntry("table1", "key1");
+
+	Entry entry;
+	entry.set_value("my_value_2");
+	entry.set_table_name("table1");
+	entry.set_key_name("key2");
+	entry.set_key_value("value1_2");
+	entry.set_sort(true);
+
+	bool result = return_entry.value() == entry.value();
+
+	EXPECT_EQ(true, result);
+}
