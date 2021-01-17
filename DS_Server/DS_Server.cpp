@@ -101,30 +101,30 @@ class DBServiceImpl final : public DBInterface::Service {
         ::GetNextEntryResponse* response) override {
         Entry entry = request->entry();
         Entry entry_next = database->GetNextEntry(entry);
-        response->mutable_next_entry()->set_global_index(entry.global_index());
-        response->mutable_next_entry()->set_value(entry.value());
-        response->mutable_next_entry()->set_key_name(entry.key_name());
-        response->mutable_next_entry()->set_key_value(entry.key_value());
-        response->mutable_next_entry()->set_table_name(entry.table_name());
-        response->mutable_next_entry()->set_sort(entry.sort());
+        response->mutable_next_entry()->set_global_index(entry_next.global_index());
+        response->mutable_next_entry()->set_value(entry_next.value());
+        response->mutable_next_entry()->set_key_name(entry_next.key_name());
+        response->mutable_next_entry()->set_key_value(entry_next.key_value());
+        response->mutable_next_entry()->set_table_name(entry_next.table_name());
+        response->mutable_next_entry()->set_sort(entry_next.sort());
 
         return entry.value() != "Error" ?
-            Status::OK : Status::Status(grpc::StatusCode::ABORTED, entry.table_name());
+            Status::OK : Status::Status(grpc::StatusCode::ABORTED, entry_next.table_name());
     }
 
     Status GetPrevEntry(::grpc::ServerContext* context, const ::GetPrevEntryRequest* request,
         ::GetPrevEntryResponse* response) override {
         Entry entry = request->entry();
         Entry entry_next = database->GetPrevEntry(entry);
-        response->mutable_prev_entry()->set_global_index(entry.global_index());
-        response->mutable_prev_entry()->set_value(entry.value());
-        response->mutable_prev_entry()->set_key_name(entry.key_name());
-        response->mutable_prev_entry()->set_key_value(entry.key_value());
-        response->mutable_prev_entry()->set_table_name(entry.table_name());
-        response->mutable_prev_entry()->set_sort(entry.sort());
+        response->mutable_prev_entry()->set_global_index(entry_next.global_index());
+        response->mutable_prev_entry()->set_value(entry_next.value());
+        response->mutable_prev_entry()->set_key_name(entry_next.key_name());
+        response->mutable_prev_entry()->set_key_value(entry_next.key_value());
+        response->mutable_prev_entry()->set_table_name(entry_next.table_name());
+        response->mutable_prev_entry()->set_sort(entry_next.sort());
 
         return entry.value() != "Error" ?
-            Status::OK : Status::Status(grpc::StatusCode::ABORTED, entry.table_name());
+            Status::OK : Status::Status(grpc::StatusCode::ABORTED, entry_next.table_name());
     }
 
     Status AddEntry(::grpc::ServerContext* context, const ::AddEntryRequest* request,

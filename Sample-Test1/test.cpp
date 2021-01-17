@@ -74,17 +74,18 @@ TEST(TestCaseName4, TestName4)
 	database->AddEntry("table1", keys2, "my_value_2");
 
 	Entry return_entry = database->GetFirstEntry("table1", "key1", true);
+	Entry next_entry = database->GetNextEntry(return_entry);
 
 	Entry entry;
-	entry.set_value("my_value_2");
+	entry.set_value("my_value_1");
 	entry.set_table_name("table1");
 	entry.set_key_name("key1");
-	entry.set_key_value("value1_2");
+	entry.set_key_value("value1_1");
 	entry.set_sort(true);
 
-	bool result = return_entry.key_value() == entry.key_value() && 
-		return_entry.value() == entry.value() &&
-		return_entry.key_name() == entry.key_name();
+	bool result = next_entry.key_value() == entry.key_value() &&
+		next_entry.value() == entry.value() &&
+		next_entry.key_name() == entry.key_name();
 
-	EXPECT_EQ(true, database->DeleteCurrentEntry(return_entry));
+	EXPECT_EQ(true, result);
 }
