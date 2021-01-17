@@ -73,6 +73,13 @@ TEST(TestCaseName4, TestName4)
 	keys2.push_back(key_value2);
 	database->AddEntry("table1", keys2, "my_value_2");
 
+	vector<KeyValue> keys3;
+	KeyValue key_value3;
+	key_value3.set_name("key1");
+	key_value3.set_value("value1_3");
+	keys3.push_back(key_value3);
+	database->AddEntry("table1", keys3, "my_value_3");
+
 	Entry return_entry = database->GetFirstEntry("table1", "key1", true);
 	Entry next_entry = database->GetNextEntry(return_entry);
 

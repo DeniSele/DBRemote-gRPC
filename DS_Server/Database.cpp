@@ -94,7 +94,7 @@ class Database : public DatabaseInterface {
 							auto itemIndex = std::find(indexes.begin(), indexes.end(), entry.global_index());
 							itemIndex++;
 							int new_index = (*itemIndex);
-							return ReturnIndexedEntry(new_index, main_table[new_index], entry.key_name(), entry.key_value(), true).entry;
+							return ReturnIndexedEntry(new_index, main_table[new_index], entry.key_name(), entry.key_value(), entry.sort()).entry;
 						}
 					}
 
@@ -106,7 +106,7 @@ class Database : public DatabaseInterface {
 					std::string key_value = (*iterator).first;
 					std::string value = main_table[index];
 					
-					return ReturnIndexedEntry(index, value, entry.key_name(), key_value, true).entry;
+					return ReturnIndexedEntry(index, value, entry.key_name(), key_value, entry.sort()).entry;
 				}
 
 				errorEntry.set_table_name("Error. No key value found with key [" + entry.key_value() + "]");
@@ -129,7 +129,7 @@ class Database : public DatabaseInterface {
 							auto itemIndex = std::find(indexes.begin(), indexes.end(), entry.global_index());
 							itemIndex--;
 							int new_index = (*itemIndex);
-							return ReturnIndexedEntry(new_index, main_table[new_index], entry.key_name(), entry.key_value(), true).entry;
+							return ReturnIndexedEntry(new_index, main_table[new_index], entry.key_name(), entry.key_value(), entry.sort()).entry;
 						}
 					}
 
@@ -141,7 +141,7 @@ class Database : public DatabaseInterface {
 					std::string key_value = (*iterator).first;
 					std::string value = main_table[index];
 
-					return ReturnIndexedEntry(index, value, entry.key_name(), key_value, true).entry;
+					return ReturnIndexedEntry(index, value, entry.key_name(), key_value, entry.sort()).entry;
 				}
 
 				errorEntry.set_table_name("Error. No key value found with key [" + entry.key_value() + "]");
