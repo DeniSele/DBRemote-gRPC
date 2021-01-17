@@ -55,6 +55,10 @@ class Database : public DatabaseInterface {
 		};
 		~Table() { };
 
+		std::string GetErrorMessage() {
+			return error_message;
+		}
+
 		Entry GetFirstEntry(std::string key_name) {
 			if (HasKey(key_name)) {
 				return GetEntrySorted(true, key_name);
@@ -190,7 +194,7 @@ class Database : public DatabaseInterface {
 				return true;
 			}
 
-			error_message = "Error. No key value found with name [" + entry.key_name() + "]";
+			error_message = "Error. No key value found with name [" + entry.key_value() + "]";
 			return false;
 		}
 
@@ -336,7 +340,17 @@ public:
 
 	bool DeleteCurrentEntry(Entry entry) override
 	{
-		return tables[entry.table_name()].DeleteEntry(entry);
+		bool result = tables[entry.table_name()].DeleteEntry(entry);
+
+		if (!result) {
+			error_message = tables[entry.table_name()].GetErrorMessage();
+		}
+
+		return result;
+	}
+
+	std::string GetErrorString() override {
+		return error_message;
 	}
 
 private:

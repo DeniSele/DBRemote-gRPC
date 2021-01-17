@@ -100,6 +100,8 @@ public:
 	DatabaseInterface(){}
 	virtual ~DatabaseInterface(){}
 
+	virtual std::string GetErrorString() = 0;
+
 	virtual bool CreateTable(std::string name, std::vector<std::string> keys) = 0;
 	virtual bool DeleteTable(std::string name) = 0;
 

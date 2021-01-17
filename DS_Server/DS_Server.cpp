@@ -40,7 +40,7 @@ class DBServiceImpl final : public DBInterface::Service {
         std::string name = request->table_name();
 
         bool result = database->DeleteTable(name);
-        return result ? Status::OK : Status::CANCELLED;
+        return result ? Status::OK : Status::Status(grpc::StatusCode::NOT_FOUND, database->GetErrorString());
     }
 
     Status GetFirstEntry(::grpc::ServerContext* context, const ::GetSeqEntryRequest* request,
@@ -108,7 +108,7 @@ class DBServiceImpl final : public DBInterface::Service {
         response->mutable_next_entry()->set_table_name(entry_next.table_name());
         response->mutable_next_entry()->set_sort(entry_next.sort());
 
-        return entry.value() != "Error" ?
+        return entry_next.value() != "Error" ?
             Status::OK : Status::Status(grpc::StatusCode::ABORTED, entry_next.table_name());
     }
 
@@ -123,7 +123,7 @@ class DBServiceImpl final : public DBInterface::Service {
         response->mutable_prev_entry()->set_table_name(entry_next.table_name());
         response->mutable_prev_entry()->set_sort(entry_next.sort());
 
-        return entry.value() != "Error" ?
+        return entry_next.value() != "Error" ?
             Status::OK : Status::Status(grpc::StatusCode::ABORTED, entry_next.table_name());
     }
 
