@@ -263,6 +263,10 @@ public:
 
 	bool CreateTable(std::string name, std::vector<std::string> keys) override
 	{
+		if (HasTable(name)) {
+			return false;
+		}
+
 		tables[name] = Table(name, keys);
 		return true;
 	}
