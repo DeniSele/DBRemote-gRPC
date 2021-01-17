@@ -266,6 +266,8 @@ class Database : public DatabaseInterface {
 	// all tables
 	std::map<std::string, Table*> tables;
 
+	std::shared_timed_mutex databaseMutex;
+
 public:
 	std::string error_message = "undefined_error";
 	Entry error_entry;
@@ -276,6 +278,8 @@ public:
 
 	bool CreateTable(std::string name, std::vector<std::string> keys) override
 	{
+		std::lock_guard<std::shared_timed_mutex> writerLock(databaseMutex);
+
 		if (HasTable(name)) {
 			return false;
 		}
@@ -286,6 +290,8 @@ public:
 
 	bool DeleteTable(std::string name) override
 	{
+		std::lock_guard<std::shared_timed_mutex> writerLock(databaseMutex);
+
 		if (!HasTable(name)) {
 			error_message = "Error. Table was not found.";
 			return false;
@@ -296,6 +302,8 @@ public:
 
 	Entry GetFirstEntry(std::string name, std::string key_name, bool sort_order) override
 	{
+		std::shared_lock<std::shared_timed_mutex> readerLock(databaseMutex);
+
 		if (!HasTable(name)) {
 			error_message = "Error. Table was not found.";
 			return error_entry;
@@ -306,6 +314,8 @@ public:
 
 	Entry GetLastEntry(std::string name, std::string key_name, bool sort_order) override
 	{
+		std::shared_lock<std::shared_timed_mutex> readerLock(databaseMutex);
+
 		if (!HasTable(name)) {
 			error_message = "Error. Table was not found.";
 			return error_entry;
@@ -315,6 +325,8 @@ public:
 
 	Entry GetEntry(std::string name, std::string key_name, std::string key_value) override
 	{
+		std::shared_lock<std::shared_timed_mutex> readerLock(databaseMutex);
+
 		if (!HasTable(name)) {
 			error_message = "Error. Table was not found.";
 			return error_entry;
@@ -324,16 +336,20 @@ public:
 
 	Entry GetNextEntry(Entry entry) override
 	{
+		std::shared_lock<std::shared_timed_mutex> readerLock(databaseMutex);
 		return entry.sort() ? tables[entry.table_name()]->GetPrevEntry(entry) : tables[entry.table_name()]->GetNextEntry(entry);
 	}
 
 	Entry GetPrevEntry(Entry entry) override
 	{
+		std::shared_lock<std::shared_timed_mutex> readerLock(databaseMutex);
 		return entry.sort() ? tables[entry.table_name()]->GetNextEntry(entry) : tables[entry.table_name()]->GetPrevEntry(entry);
 	}
 
 	bool AddEntry(std::string table_name, std::vector<KeyValue> keys, std::string value) override
 	{
+		std::shared_lock<std::shared_timed_mutex> readerLock(databaseMutex);
+
 		if (!HasTable(table_name)) {
 			error_message = "Error. Table was not found.";
 			return false;
@@ -343,8 +359,9 @@ public:
 
 	bool DeleteCurrentEntry(Entry entry) override
 	{
-		bool result = tables[entry.table_name()]->DeleteEntry(entry);
+		std::shared_lock<std::shared_timed_mutex> readerLock(databaseMutex);
 
+		bool result = tables[entry.table_name()]->DeleteEntry(entry);
 		if (!result) {
 			error_message = tables[entry.table_name()]->GetErrorMessage();
 		}
