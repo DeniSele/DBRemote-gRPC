@@ -59,25 +59,6 @@ class Database : public DatabaseInterface {
 			return error_message;
 		}
 
-		Entry GetFirstEntry(std::string key_name, bool sort_order) {
-			if (HasKey(key_name)) {
-				return GetEntrySorted(sort_order, key_name);
-			}
-
-			errorEntry.set_table_name("Error. No key found with name [" + key_name + "]");
-			return errorEntry;
-		}
-
-
-		Entry GetLastEntry(std::string key_name, bool sort_order) {
-			if (HasKey(key_name)) {
-				return GetEntrySorted(sort_order, key_name);
-			}
-
-			errorEntry.set_table_name("Error. No key found with name [" + key_name + "]");
-			return errorEntry;
-		}
-
 		Entry GetEntry(std::string key_name, std::string key_value) {
 			return GetIndexedEntry(key_name, key_value).entry;
 		}
@@ -198,6 +179,24 @@ class Database : public DatabaseInterface {
 			return false;
 		}
 
+		Entry GetEntrySorted(bool from_front, bool sort, std::string key_name) {
+			std::vector<std::string> keys_values;
+			for (auto it = keys_map[key_name].begin(); it != keys_map[key_name].end(); ++it) {
+				keys_values.push_back(it->first);
+			}
+
+			if (keys_values.empty()) {
+				errorEntry.set_table_name("Error. No keys values found with key [" + key_name + "]");
+				return errorEntry;
+			}
+
+			std::sort(keys_values.begin(), keys_values.end());
+			std::string key_value = (sort ? !from_front : from_front) ? keys_values.front() : keys_values.back();
+			int index = keys_map[key_name][key_value][0];
+			std::string value = main_table[index];
+			return ReturnIndexedEntry(index, value, key_name, key_value, sort).entry;
+		}
+
 	private:
 		IndexedEntry GetIndexedEntry(std::string key_name, std::string key_value) {
 			if (HasKey(key_name)) {
@@ -220,23 +219,6 @@ class Database : public DatabaseInterface {
 			return errorIndexedEntry;
 		}
 
-		Entry GetEntrySorted(bool sort, std::string key_name) {
-			std::vector<std::string> keys_values;
-			for (auto it = keys_map[key_name].begin(); it != keys_map[key_name].end(); ++it) {
-				keys_values.push_back(it->first);
-			}
-
-			if (keys_values.empty()) {
-				errorEntry.set_table_name("Error. No keys values found with key [" + key_name + "]");
-				return errorEntry;
-			}
-
-			std::sort(keys_values.begin(), keys_values.end());
-			std::string key_value = sort ? keys_values.front() : keys_values.back();
-			int index = keys_map[key_name][key_value][0];
-			std::string value = main_table[index];
-			return ReturnIndexedEntry(index, value, key_name, key_value, sort).entry;
-		}
 
 		IndexedEntry ReturnIndexedEntry(int index, std::string value, std::string key_name, std::string key_value, bool sort) {
 			Entry entry;
@@ -298,7 +280,7 @@ public:
 			return error_entry;
 		}
 
-		return !sort_order ? tables[name].GetLastEntry(key_name, sort_order) : tables[name].GetFirstEntry(key_name, sort_order);
+		return tables[name].GetEntrySorted(true, sort_order, key_name);
 	}
 
 	Entry GetLastEntry(std::string name, std::string key_name, bool sort_order) override
@@ -307,7 +289,7 @@ public:
 			error_message = "Error. Table was not found.";
 			return error_entry;
 		}
-		return !sort_order ? tables[name].GetFirstEntry(key_name, sort_order) : tables[name].GetLastEntry(key_name, sort_order);
+		return tables[name].GetEntrySorted(false, sort_order, key_name);
 	}
 
 	Entry GetEntry(std::string name, std::string key_name, std::string key_value) override
