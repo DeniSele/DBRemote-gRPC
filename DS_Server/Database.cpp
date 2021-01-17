@@ -134,19 +134,24 @@ class Database : public DatabaseInterface {
 		}
 
 		bool CreateEntry(std::vector<KeyValue> keys, std::string value) {
-			main_table[global_index] = value;
-			main_keys_table[global_index] = std::vector<std::pair<std::string, std::string>>();
 			for (KeyValue key_pair : keys) {
 				if (!HasKey(key_pair.name())) {
 					error_message = "Error. No key found with name [" + key_pair.name() + "]";
 					return false;
 				}
+			}
+
+			for (KeyValue key_pair : keys) {
 				if (keys_map[key_pair.name()].find(key_pair.value()) == keys_map[key_pair.name()].end()) {
 					keys_map[key_pair.name()][key_pair.value()] = std::vector<int>();
 				}
 				keys_map[key_pair.name()][key_pair.value()].push_back(global_index);
 				main_keys_table[global_index].push_back(std::make_pair(key_pair.name(), key_pair.value()));
 			}
+
+			main_table[global_index] = value;
+			main_keys_table[global_index] = std::vector<std::pair<std::string, std::string>>();
+
 			global_index++;
 			return true;
 		}
