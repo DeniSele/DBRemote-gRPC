@@ -59,9 +59,9 @@ class Database : public DatabaseInterface {
 			return error_message;
 		}
 
-		Entry GetFirstEntry(std::string key_name) {
+		Entry GetFirstEntry(std::string key_name, bool sort_order) {
 			if (HasKey(key_name)) {
-				return GetEntrySorted(true, key_name);
+				return GetEntrySorted(sort_order, key_name);
 			}
 
 			errorEntry.set_table_name("Error. No key found with name [" + key_name + "]");
@@ -69,9 +69,9 @@ class Database : public DatabaseInterface {
 		}
 
 
-		Entry GetLastEntry(std::string key_name) {
+		Entry GetLastEntry(std::string key_name, bool sort_order) {
 			if (HasKey(key_name)) {
-				return GetEntrySorted(false, key_name);
+				return GetEntrySorted(sort_order, key_name);
 			}
 
 			errorEntry.set_table_name("Error. No key found with name [" + key_name + "]");
@@ -298,7 +298,7 @@ public:
 			return error_entry;
 		}
 
-		return sort_order ? tables[name].GetLastEntry(key_name) : tables[name].GetFirstEntry(key_name);
+		return sort_order ? tables[name].GetLastEntry(key_name, sort_order) : tables[name].GetFirstEntry(key_name, sort_order);
 	}
 
 	Entry GetLastEntry(std::string name, std::string key_name, bool sort_order) override
@@ -307,7 +307,7 @@ public:
 			error_message = "Error. Table was not found.";
 			return error_entry;
 		}
-		return sort_order ? tables[name].GetFirstEntry(key_name) : tables[name].GetLastEntry(key_name);
+		return sort_order ? tables[name].GetFirstEntry(key_name, sort_order) : tables[name].GetLastEntry(key_name, sort_order);
 	}
 
 	Entry GetEntry(std::string name, std::string key_name, std::string key_value) override
