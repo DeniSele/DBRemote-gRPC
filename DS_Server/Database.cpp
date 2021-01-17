@@ -1,6 +1,7 @@
 #include <map>
 #include <vector>
 #include <iostream>
+#include <shared_mutex>
 
 #include "DatabaseInterface.cpp"
 #include <algorithm>
@@ -35,8 +36,11 @@ class Database : public DatabaseInterface {
 
 		int global_index;
 
+		std::shared_timed_mutex tableMutex;
+
 	public:
 		Table() { };
+
 		Table(std::string name, std::vector<std::string> keys)
 		{
 			table_name = name;
@@ -53,17 +57,18 @@ class Database : public DatabaseInterface {
 			errorIndexedEntry.index = -1;
 			errorIndexedEntry.entry = errorEntry;
 		};
+
 		~Table() { };
 
-		std::string GetErrorMessage() {
-			return error_message;
-		}
 
 		Entry GetEntry(std::string key_name, std::string key_value) {
+			std::shared_lock<std::shared_timed_mutex> readerLock(tableMutex);
 			return GetIndexedEntry(key_name, key_value).entry;
 		}
 
 		Entry GetNextEntry(Entry entry) {
+			std::shared_lock<std::shared_timed_mutex> readerLock(tableMutex);
+
 			if (HasKey(entry.key_name())) {
 				auto iterator = keys_map[entry.key_name()].find(entry.key_value());
 				if (iterator != keys_map[entry.key_name()].end()) {
@@ -99,6 +104,8 @@ class Database : public DatabaseInterface {
 		}
 
 		Entry GetPrevEntry(Entry entry) {
+			std::shared_lock<std::shared_timed_mutex> readerLock(tableMutex);
+
 			if (HasKey(entry.key_name())) {
 				auto iterator = keys_map[entry.key_name()].find(entry.key_value());
 				if (iterator != keys_map[entry.key_name()].end()) {
@@ -134,6 +141,8 @@ class Database : public DatabaseInterface {
 		}
 
 		bool CreateEntry(std::vector<KeyValue> keys, std::string value) {
+			std::lock_guard<std::shared_timed_mutex> writerLock(tableMutex);
+
 			for (KeyValue key_pair : keys) {
 				if (!HasKey(key_pair.name())) {
 					error_message = "Error. No key found with name [" + key_pair.name() + "]";
@@ -157,6 +166,8 @@ class Database : public DatabaseInterface {
 		}
 
 		bool DeleteEntry(Entry entry) {
+			std::lock_guard<std::shared_timed_mutex> writerLock(tableMutex);
+
 			if (!HasKey(entry.key_name())) {
 				error_message = "Error. No key found with name [" + entry.key_name() + "]";
 				return false;
@@ -185,6 +196,8 @@ class Database : public DatabaseInterface {
 		}
 
 		Entry GetEntrySorted(bool from_front, bool sort, std::string key_name) {
+			std::shared_lock<std::shared_timed_mutex> readerLock(tableMutex);
+
 			std::vector<std::string> keys_values;
 			for (auto it = keys_map[key_name].begin(); it != keys_map[key_name].end(); ++it) {
 				keys_values.push_back(it->first);
@@ -200,6 +213,10 @@ class Database : public DatabaseInterface {
 			int index = keys_map[key_name][key_value][0];
 			std::string value = main_table[index];
 			return ReturnIndexedEntry(index, value, key_name, key_value, sort).entry;
+		}
+
+		std::string GetErrorMessage() {
+			return error_message;
 		}
 
 	private:
@@ -224,7 +241,6 @@ class Database : public DatabaseInterface {
 			return errorIndexedEntry;
 		}
 
-
 		IndexedEntry ReturnIndexedEntry(int index, std::string value, std::string key_name, std::string key_value, bool sort) {
 			Entry entry;
 			entry.set_global_index(index);
@@ -248,7 +264,7 @@ class Database : public DatabaseInterface {
 	};
 
 	// all tables
-	std::map<std::string, Table> tables;
+	std::map<std::string, Table*> tables;
 
 public:
 	std::string error_message = "undefined_error";
@@ -264,7 +280,7 @@ public:
 			return false;
 		}
 
-		tables[name] = Table(name, keys);
+		tables[name] = new Table(name, keys);
 		return true;
 	}
 
@@ -285,7 +301,7 @@ public:
 			return error_entry;
 		}
 
-		return tables[name].GetEntrySorted(true, sort_order, key_name);
+		return tables[name]->GetEntrySorted(true, sort_order, key_name);
 	}
 
 	Entry GetLastEntry(std::string name, std::string key_name, bool sort_order) override
@@ -294,7 +310,7 @@ public:
 			error_message = "Error. Table was not found.";
 			return error_entry;
 		}
-		return tables[name].GetEntrySorted(false, sort_order, key_name);
+		return tables[name]->GetEntrySorted(false, sort_order, key_name);
 	}
 
 	Entry GetEntry(std::string name, std::string key_name, std::string key_value) override
@@ -303,17 +319,17 @@ public:
 			error_message = "Error. Table was not found.";
 			return error_entry;
 		}
-		return tables[name].GetEntry(key_name, key_value);
+		return tables[name]->GetEntry(key_name, key_value);
 	}
 
 	Entry GetNextEntry(Entry entry) override
 	{
-		return entry.sort() ? tables[entry.table_name()].GetPrevEntry(entry) : tables[entry.table_name()].GetNextEntry(entry);
+		return entry.sort() ? tables[entry.table_name()]->GetPrevEntry(entry) : tables[entry.table_name()]->GetNextEntry(entry);
 	}
 
 	Entry GetPrevEntry(Entry entry) override
 	{
-		return entry.sort() ? tables[entry.table_name()].GetNextEntry(entry) : tables[entry.table_name()].GetPrevEntry(entry);
+		return entry.sort() ? tables[entry.table_name()]->GetNextEntry(entry) : tables[entry.table_name()]->GetPrevEntry(entry);
 	}
 
 	bool AddEntry(std::string table_name, std::vector<KeyValue> keys, std::string value) override
@@ -322,15 +338,15 @@ public:
 			error_message = "Error. Table was not found.";
 			return false;
 		}
-		return tables[table_name].CreateEntry(keys, value);
+		return tables[table_name]->CreateEntry(keys, value);
 	}
 
 	bool DeleteCurrentEntry(Entry entry) override
 	{
-		bool result = tables[entry.table_name()].DeleteEntry(entry);
+		bool result = tables[entry.table_name()]->DeleteEntry(entry);
 
 		if (!result) {
-			error_message = tables[entry.table_name()].GetErrorMessage();
+			error_message = tables[entry.table_name()]->GetErrorMessage();
 		}
 
 		return result;
