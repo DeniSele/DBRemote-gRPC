@@ -303,7 +303,7 @@ public:
 
 	Entry GetNextEntry(Entry entry) override
 	{
-		return entry.sort() ? tables[entry.table_name()].GetNextEntry(entry) : tables[entry.table_name()].GetPrevEntry(entry);
+		return entry.sort() ? tables[entry.table_name()].GetPrevEntry(entry) : tables[entry.table_name()].GetNextEntry(entry);
 	}
 
 	Entry GetPrevEntry(Entry entry) override
