@@ -78,11 +78,13 @@ TEST(TestCaseName4, TestName4)
 	Entry entry;
 	entry.set_value("my_value_2");
 	entry.set_table_name("table1");
-	entry.set_key_name("key2");
+	entry.set_key_name("key1");
 	entry.set_key_value("value1_2");
 	entry.set_sort(true);
 
-	bool result = return_entry.value() == entry.value();
+	bool result = return_entry.key_value() == entry.key_value() && 
+		return_entry.value() == entry.value() &&
+		return_entry.key_name() == entry.key_name();
 
-	EXPECT_EQ(true, result);
+	EXPECT_EQ(true, database->DeleteCurrentEntry(return_entry));
 }

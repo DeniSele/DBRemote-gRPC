@@ -167,12 +167,12 @@ class Database : public DatabaseInterface {
 		}
 
 		bool DeleteEntry(Entry entry) {
-			if (!HasKey(entry.key_value())) {
-				error_message = "Error. No key found with name [" + entry.key_value() + "]";
+			if (!HasKey(entry.key_name())) {
+				error_message = "Error. No key found with name [" + entry.key_name() + "]";
 				return false;
 			}
 
-			if (keys_map[entry.key_value()].find(entry.key_name()) != keys_map[entry.key_value()].end()) {
+			if (keys_map[entry.key_name()].find(entry.key_value()) != keys_map[entry.key_name()].end()) {
 				IndexedEntry entryToDelete = GetIndexedEntry(entry.key_name(), entry.key_value());
 				main_table.erase(entryToDelete.index);
 				for (std::pair<std::string, std::string> key_pair : main_keys_table[entryToDelete.index]) {
