@@ -2,9 +2,11 @@
 #include <vector>
 #include "service.grpc.pb.h"
 
+
 /*
 class Entry {
 private:
+	int _global_index;
 	std::string _key_value;
 	std::string _key_name;
 	std::string _value;
@@ -12,6 +14,18 @@ private:
 	bool _sort = false;
 
 public:
+	bool operator== (Entry& val) {
+		bool result = (_key_name == val.key_name()) &&
+			(_key_value == val.key_value()) &&
+			(_value == val.value()) &&
+			(_table_name == val.table_name());
+		return result;
+	}
+
+	void set_global_index(int val) {
+		_global_index = val;
+	}
+
 	void set_value(std::string val) {
 		_value = val;
 	}
@@ -25,11 +39,15 @@ public:
 	}
 
 	void set_key_value(std::string val) {
-		_key_name = val;
+		_key_value = val;
 	}
 
 	void set_sort(bool val) {
 		_sort = val;
+	}
+
+	int global_index() {
+		return _global_index;
 	}
 
 	std::string value() {
@@ -45,7 +63,7 @@ public:
 	}
 
 	std::string key_value() {
-		return _key_name;
+		return _key_value;
 	}
 
 	bool sort() {
@@ -65,6 +83,14 @@ public:
 
 	std::string value() {
 		return _value;
+	}
+
+	void set_name(std::string val) {
+		_name = val;
+	}
+
+	void set_value(std::string val) {
+		_value = val;
 	}
 };
 */

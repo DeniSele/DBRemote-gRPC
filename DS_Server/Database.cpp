@@ -13,6 +13,11 @@ class Database : public DatabaseInterface {
 		{
 			int index;
 			Entry entry;
+
+			IndexedEntry() {
+				index = 0;
+				entry = Entry();
+			}
 		};
 
 		std::string table_name = "New table";
@@ -231,6 +236,7 @@ class Database : public DatabaseInterface {
 
 		IndexedEntry ReturnIndexedEntry(int index, std::string value, std::string key_name, std::string key_value, bool sort) {
 			Entry entry;
+			entry.set_global_index(index);
 			entry.set_value(value);
 			entry.set_table_name(table_name);
 			entry.set_key_name(key_name);

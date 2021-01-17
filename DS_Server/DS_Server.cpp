@@ -50,7 +50,12 @@ class DBServiceImpl final : public DBInterface::Service {
         std::string key_name = request->key_name();
         
         Entry entry = database->GetFirstEntry(table_name, key_name);
-        response->set_allocated_entry(&entry);
+        response->mutable_entry()->set_global_index(entry.global_index());
+        response->mutable_entry()->set_value(entry.value());
+        response->mutable_entry()->set_key_name(entry.key_name());
+        response->mutable_entry()->set_key_value(entry.key_value());
+        response->mutable_entry()->set_table_name(entry.table_name());
+        response->mutable_entry()->set_sort(entry.sort());
         return entry.value() != "Error" ? 
             Status::OK : Status::Status(grpc::StatusCode::ABORTED, entry.table_name());
     }
@@ -61,7 +66,12 @@ class DBServiceImpl final : public DBInterface::Service {
         std::string key_name = request->key_name();
 
         Entry entry = database->GetLastEntry(table_name, key_name);
-        response->set_allocated_entry(&entry);
+        response->mutable_entry()->set_global_index(entry.global_index());
+        response->mutable_entry()->set_value(entry.value());
+        response->mutable_entry()->set_key_name(entry.key_name());
+        response->mutable_entry()->set_key_value(entry.key_value());
+        response->mutable_entry()->set_table_name(entry.table_name());
+        response->mutable_entry()->set_sort(entry.sort());
 
         return entry.value() != "Error" ?
             Status::OK : Status::Status(grpc::StatusCode::ABORTED, entry.table_name());
@@ -74,7 +84,12 @@ class DBServiceImpl final : public DBInterface::Service {
         std::string key_value = request->key_value();
 
         Entry entry = database->GetEntry(table_name, key_name, key_value);
-        response->set_allocated_entry(&entry);
+        response->mutable_entry()->set_global_index(entry.global_index());
+        response->mutable_entry()->set_value(entry.value());
+        response->mutable_entry()->set_key_name(entry.key_name());
+        response->mutable_entry()->set_key_value(entry.key_value());
+        response->mutable_entry()->set_table_name(entry.table_name());
+        response->mutable_entry()->set_sort(entry.sort());
 
         return entry.value() != "Error" ?
             Status::OK : Status::Status(grpc::StatusCode::ABORTED, entry.table_name());
@@ -84,7 +99,12 @@ class DBServiceImpl final : public DBInterface::Service {
         ::GetNextEntryResponse* response) override {
         Entry entry = request->entry();
         Entry entry_next = database->GetNextEntry(entry);
-        response->set_allocated_next_entry(&entry_next);
+        response->mutable_next_entry()->set_global_index(entry.global_index());
+        response->mutable_next_entry()->set_value(entry.value());
+        response->mutable_next_entry()->set_key_name(entry.key_name());
+        response->mutable_next_entry()->set_key_value(entry.key_value());
+        response->mutable_next_entry()->set_table_name(entry.table_name());
+        response->mutable_next_entry()->set_sort(entry.sort());
 
         return entry.value() != "Error" ?
             Status::OK : Status::Status(grpc::StatusCode::ABORTED, entry.table_name());
@@ -94,7 +114,12 @@ class DBServiceImpl final : public DBInterface::Service {
         ::GetPrevEntryResponse* response) override {
         Entry entry = request->entry();
         Entry entry_next = database->GetPrevEntry(entry);
-        response->set_allocated_prev_entry(&entry_next);
+        response->mutable_prev_entry()->set_global_index(entry.global_index());
+        response->mutable_prev_entry()->set_value(entry.value());
+        response->mutable_prev_entry()->set_key_name(entry.key_name());
+        response->mutable_prev_entry()->set_key_value(entry.key_value());
+        response->mutable_prev_entry()->set_table_name(entry.table_name());
+        response->mutable_prev_entry()->set_sort(entry.sort());
 
         return entry.value() != "Error" ?
             Status::OK : Status::Status(grpc::StatusCode::ABORTED, entry.table_name());
