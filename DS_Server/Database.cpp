@@ -321,12 +321,12 @@ public:
 
 	Entry GetNextEntry(Entry entry) override
 	{
-		return tables[entry.table_name()].GetNextEntry(entry);
+		return !entry.sort() ? tables[entry.table_name()].GetNextEntry(entry) : tables[entry.table_name()].GetPrevEntry(entry);
 	}
 
 	Entry GetPrevEntry(Entry entry) override
 	{
-		return tables[entry.table_name()].GetPrevEntry(entry);
+		return !entry.sort() ? tables[entry.table_name()].GetPrevEntry(entry) : tables[entry.table_name()].GetNextEntry(entry);
 	}
 
 	bool AddEntry(std::string table_name, std::vector<KeyValue> keys, std::string value) override
