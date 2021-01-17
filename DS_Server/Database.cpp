@@ -313,7 +313,7 @@ public:
 
 	Entry GetPrevEntry(Entry entry) override
 	{
-		return entry.sort() ? tables[entry.table_name()].GetPrevEntry(entry) : tables[entry.table_name()].GetNextEntry(entry);
+		return entry.sort() ? tables[entry.table_name()].GetNextEntry(entry) : tables[entry.table_name()].GetPrevEntry(entry);
 	}
 
 	bool AddEntry(std::string table_name, std::vector<KeyValue> keys, std::string value) override
