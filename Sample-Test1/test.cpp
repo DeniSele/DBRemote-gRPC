@@ -80,8 +80,8 @@ TEST(TestCaseName4, TestName4)
 	keys3.push_back(key_value3);
 	database->AddEntry("table1", keys3, "my_value_3");
 
-	Entry return_entry = database->GetFirstEntry("table1", "key1", true);
-	Entry next_entry = database->GetNextEntry(return_entry);
+	Entry return_entry = database->GetLastEntry("table1", "key1", true);
+	Entry next_entry = database->GetPrevEntry(return_entry);
 
 	Entry entry;
 	entry.set_value("my_value_1");
