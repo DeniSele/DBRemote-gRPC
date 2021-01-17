@@ -298,7 +298,7 @@ public:
 			return error_entry;
 		}
 
-		return sort_order ? tables[name].GetLastEntry(key_name, sort_order) : tables[name].GetFirstEntry(key_name, sort_order);
+		return !sort_order ? tables[name].GetLastEntry(key_name, sort_order) : tables[name].GetFirstEntry(key_name, sort_order);
 	}
 
 	Entry GetLastEntry(std::string name, std::string key_name, bool sort_order) override
@@ -307,7 +307,7 @@ public:
 			error_message = "Error. Table was not found.";
 			return error_entry;
 		}
-		return sort_order ? tables[name].GetFirstEntry(key_name, sort_order) : tables[name].GetLastEntry(key_name, sort_order);
+		return !sort_order ? tables[name].GetFirstEntry(key_name, sort_order) : tables[name].GetLastEntry(key_name, sort_order);
 	}
 
 	Entry GetEntry(std::string name, std::string key_name, std::string key_value) override
