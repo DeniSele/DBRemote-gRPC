@@ -8,7 +8,7 @@
 #include <grpcpp/ext/proto_server_reflection_plugin.h>
 
 #include "service.grpc.pb.h"
-#include "DatabaseInterface.cpp"
+#include "Database.cpp"
 
 using grpc::Server;
 using grpc::ServerBuilder;
@@ -17,7 +17,7 @@ using grpc::Status;
 
 class DBServiceImpl final : public DBInterface::Service {
 
-    DatabaseInterface* database = new DatabaseStub();
+    DatabaseInterface* database = new Database();
 
     Status CreateTable(::grpc::ServerContext* context, const ::CreateTableRequest* request,
         ::CreateTableResponse* response) override {
