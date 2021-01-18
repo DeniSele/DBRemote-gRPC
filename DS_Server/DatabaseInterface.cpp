@@ -105,18 +105,18 @@ public:
 
 	virtual std::string GetErrorString() = 0;
 
-	virtual bool CreateTable(std::string name, std::vector<std::string> keys) = 0;
-	virtual bool DeleteTable(std::string name) = 0;
+	virtual bool CreateTable(const std::string name, const std::vector<std::string> keys) = 0;
+	virtual bool DeleteTable(const std::string name) = 0;
 
-	virtual Entry GetFirstEntry(std::string name, std::string key_name, bool sort_order) = 0;
-	virtual Entry GetLastEntry(std::string name, std::string key_name, bool sort_order) = 0;
+	virtual Entry GetFirstEntry(const std::string name, const std::string key_name, const bool sort_order) = 0;
+	virtual Entry GetLastEntry(const std::string name, const std::string key_name, const bool sort_order) = 0;
 
-	virtual Entry GetEntry(std::string name, std::string key_name, std::string key_value) = 0;
-	virtual Entry GetNextEntry(Entry entry) = 0;
-	virtual Entry GetPrevEntry(Entry entry) = 0;
+	virtual Entry GetEntry(const std::string name, const std::string key_name, const std::string key_value) = 0;
+	virtual Entry GetNextEntry(const Entry entry) = 0;
+	virtual Entry GetPrevEntry(const Entry entry) = 0;
 
-	virtual bool AddEntry(std::string table_name, std::vector<KeyValue> keys, std::string value) = 0;
-	virtual bool DeleteCurrentEntry(Entry entry) = 0;
+	virtual bool AddEntry(const std::string table_name, const std::vector<KeyValue> keys, const std::string value) = 0;
+	virtual bool DeleteCurrentEntry(const Entry entry) = 0;
 };
 
 /*

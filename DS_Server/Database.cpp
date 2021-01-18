@@ -489,7 +489,7 @@ public:
 	}
 
 	void Load() override {
-		std::string path = "D:\\DatabaseDS\\Debug";
+		std::string path = "C:\\Users\\User\\source\\repos\\DS_Server\\Debug";
 		auto table_names = get_all_files_names_within_folder(path);
 		for (auto const& table_name_local : table_names) {
 			auto table = new Table();
