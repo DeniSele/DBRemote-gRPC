@@ -3,8 +3,12 @@
 #include <iostream>
 #include <shared_mutex>
 
+#include <fstream>
+#include <sstream>
 #include "DatabaseInterface.cpp"
 #include <algorithm>
+#include <windows.h>
+#include<tchar.h>
 
 class Database : public DatabaseInterface {
 
@@ -39,9 +43,200 @@ class Database : public DatabaseInterface {
 		std::shared_timed_mutex tableMutex;
 
 	public:
+
+		void Save() {
+			std::ofstream fout;
+			fout.open(table_name + ".data");
+			//header - names of keys from keys_map
+			std::string header = "";
+			for (auto const& x : keys_map)
+			{
+				header += "\"" + x.first + "\",";
+			}
+			header += "\n";
+			fout << header;
+
+			// record global_index,"key_name1":"key_value1","key_name2":"key_value2",key_name1:"key_value1","value"
+			// key_value can be empty it will look like global_index, "key_name1":"key_value1", "key_name2":"","value"
+			for (auto const& key : main_table)
+			{
+				//value
+				std::string result_string = "";
+				std::string value = key.second;
+
+				//global_index component
+				int global_index = key.first;
+				result_string += std::to_string(global_index) + ",";
+
+				//iterating through key_map because not all key_values can be presented so
+				//it is nessesary to fill with "" in these cases
+				for (auto const& key_name : keys_map)
+				{
+					//flag if this key_value is presented to this global_index
+					bool contains = false;
+					for (auto const& key_name_key_value : main_keys_table[global_index])
+					{
+						//if presented
+						if (key_name_key_value.first == key_name.first) {
+							//fill key_name and key_value
+							result_string += "\"" + key_name_key_value.first + ":" + key_name_key_value.second + "\",";
+							//switch flag key_name is in the vector
+							contains = true;
+							break;
+						}
+
+					}
+
+					//there is no key_value for such key_name so fill with ""
+					if (!contains) {
+						result_string += "\"" + key_name.first + ":\",";
+					}
+				}
+
+				//write result string
+				result_string += "\"" + value + "\"\n";
+				fout << result_string;
+			}
+
+			fout.close();
+		}
+
+		void Load(const std::string table_name_param) {
+			//filling main_table and main_keys_table
+
+			std::ifstream fin;
+			fin.open(table_name_param);
+			table_name = table_name_param.substr(0, table_name_param.size() - 5);
+			//header+
+			std::string header = "";
+			std::getline(fin, header);
+			auto key_names = split(header, ',');
+			for (int i = 0; i < key_names.size(); i++) {
+				key_names[i] = key_names[i].substr(1, key_names[i].size() - 2);
+			}
+
+			//reading records 1by1
+			std::string record;
+			while (std::getline(fin, record))
+			{
+				//all fields
+				auto fields = split(record, ',');
+
+
+				// global index - 1 field
+				int index = std::stoi(fields[0]);
+
+				// value - last field
+				std::string value = fields[fields.size() - 1];
+				value = value.substr(1, value.size() - 2);
+
+				//deleting index and value to leave in fields vector only names and values of keys
+				fields.erase(fields.begin());
+				fields.erase(--fields.end());
+
+				std::vector<std::pair<std::string, std::string>> key_names_key_values;
+				for (auto const& key_name_key_value : fields)
+				{
+					//splitting to key_name and key_value(they are separated by :)
+					auto key_name_key_value_vector = split(key_name_key_value, ':');
+
+					//removing extra "
+					auto key_name = key_name_key_value_vector[0];
+					key_name = key_name.substr(1, key_name.size() - 1);
+
+					//removing extra "
+					auto key_value = key_name_key_value_vector[1];
+					key_value = key_value.substr(0, key_value.size() - 1);
+
+					if (key_value.size() != 0) {
+						//making pair key_name_key_value and pushing to vector of key_name_key_values
+						key_names_key_values.push_back(std::make_pair(key_name, key_value));
+					}
+
+				}
+
+				//fill main keys_table and main_table with data from file
+				main_keys_table[index] = key_names_key_values;
+				main_table[index] = value;
+			}
+
+			////CHECKCKCKCK
+
+			//filling key_map with main_keys_table
+			for (auto const& index_key_name_key_value : main_keys_table)
+			{
+				//get global index
+				int global_index = index_key_name_key_value.first;
+				for (auto const& key_name_key_value : index_key_name_key_value.second)
+				{
+					//is key_name in keys_map?
+					auto it_key_name = keys_map.find(key_name_key_value.first);
+					if (it_key_name == keys_map.end()) {
+						//nah
+
+						//need to create map of key_value_indexes
+						std::map<std::string, std::vector<int>> key_value_indexes;
+						//need to create vector of indexes
+						std::vector<int> indexes;
+						//filling vector with global_index
+						indexes.push_back(global_index);
+						//filling map with key_name and just created vector of indexes
+						key_value_indexes[key_name_key_value.second] = indexes;
+						//pushing key_name_map_of_key_values
+						keys_map[key_name_key_value.first] = key_value_indexes;
+					}
+					else {
+						//yeah
+
+						//key_values map
+						auto key_value_indexes = it_key_name->second;
+						auto it_key_values = key_value_indexes.find(key_name_key_value.second);
+
+						//is this key_value in map of key_value_indexes
+						if (it_key_values == key_value_indexes.end())
+						{
+							//nah
+
+							std::vector<int> indexes;
+							//filling vector with global_index
+							indexes.push_back(global_index);
+							//filling map with key_name and just created vector of indexes
+							it_key_name->second[key_name_key_value.second] = indexes;
+
+
+						}
+						else {
+							//yeah
+
+							//to existing key_value pushing to vector global_index
+							it_key_values->second.push_back(global_index);
+						}
+
+					}
+				}
+
+			}
+
+			for (auto const& key_name : key_names)
+			{
+				//is key_name in keys_map?
+				auto it_key_name = keys_map.find(key_name);
+				if (it_key_name == keys_map.end()) {
+					//nah
+
+					//need to create map of key_value_indexes
+					std::map<std::string, std::vector<int>> key_value_indexes;
+					//pushing key_name_map_of_key_values
+					keys_map[key_name] = key_value_indexes;
+				}
+			}
+
+			fin.close();
+		}
+
 		Table() { };
 
-		Table(std::string name, std::vector<std::string> keys)
+		Table(const std::string name, const std::vector<std::string> keys)
 		{
 			table_name = name;
 			global_index = 1000;
@@ -61,12 +256,12 @@ class Database : public DatabaseInterface {
 		~Table() { };
 
 
-		Entry GetEntry(std::string key_name, std::string key_value) {
+		Entry GetEntry(const std::string key_name, const std::string key_value) {
 			std::shared_lock<std::shared_timed_mutex> readerLock(tableMutex);
 			return GetIndexedEntry(key_name, key_value).entry;
 		}
 
-		Entry GetNextEntry(Entry entry) {
+		Entry GetNextEntry(const Entry entry) {
 			std::shared_lock<std::shared_timed_mutex> readerLock(tableMutex);
 
 			if (HasKey(entry.key_name())) {
@@ -103,7 +298,7 @@ class Database : public DatabaseInterface {
 			return errorEntry;
 		}
 
-		Entry GetPrevEntry(Entry entry) {
+		Entry GetPrevEntry(const Entry entry) {
 			std::shared_lock<std::shared_timed_mutex> readerLock(tableMutex);
 
 			if (HasKey(entry.key_name())) {
@@ -140,7 +335,7 @@ class Database : public DatabaseInterface {
 			return errorEntry;
 		}
 
-		bool CreateEntry(std::vector<KeyValue> keys, std::string value) {
+		bool CreateEntry(const std::vector<KeyValue> keys, const std::string value) {
 			std::lock_guard<std::shared_timed_mutex> writerLock(tableMutex);
 
 			for (KeyValue key_pair : keys) {
@@ -165,7 +360,7 @@ class Database : public DatabaseInterface {
 			return true;
 		}
 
-		bool DeleteEntry(Entry entry) {
+		bool DeleteEntry(const Entry entry) {
 			std::lock_guard<std::shared_timed_mutex> writerLock(tableMutex);
 
 			if (!HasKey(entry.key_name())) {
@@ -195,7 +390,7 @@ class Database : public DatabaseInterface {
 			return false;
 		}
 
-		Entry GetEntrySorted(bool from_front, bool sort, std::string key_name) {
+		Entry GetEntrySorted(const bool from_front, const bool sort, const std::string key_name) {
 			std::shared_lock<std::shared_timed_mutex> readerLock(tableMutex);
 
 			std::vector<std::string> keys_values;
@@ -220,7 +415,7 @@ class Database : public DatabaseInterface {
 		}
 
 	private:
-		IndexedEntry GetIndexedEntry(std::string key_name, std::string key_value) {
+		IndexedEntry GetIndexedEntry(const std::string key_name, const std::string key_value) {
 			if (HasKey(key_name)) {
 				if (keys_map[key_name].find(key_value) != keys_map[key_name].end()) {
 					if (keys_map[key_name][key_value].size() > 0) {
@@ -241,7 +436,7 @@ class Database : public DatabaseInterface {
 			return errorIndexedEntry;
 		}
 
-		IndexedEntry ReturnIndexedEntry(int index, std::string value, std::string key_name, std::string key_value, bool sort) {
+		IndexedEntry ReturnIndexedEntry(const int index, const std::string value, const std::string key_name, const std::string key_value, const bool sort) {
 			Entry entry;
 			entry.set_global_index(index);
 			entry.set_value(value);
@@ -257,10 +452,20 @@ class Database : public DatabaseInterface {
 			return indexedEntry;
 		}
 
-		bool HasKey(std::string key_name) {
+		bool HasKey(const std::string key_name) {
 			return keys_map.find(key_name) != keys_map.end();
 		}
 
+		std::vector<std::string> split(const std::string& s, char delim) {
+			std::vector<std::string> elems;
+			std::stringstream ss;
+			ss.str(s);
+			std::string item;
+			while (std::getline(ss, item, delim)) {
+				elems.push_back(item);
+			}
+			return elems;
+		}
 	};
 
 	// all tables
@@ -268,15 +473,32 @@ class Database : public DatabaseInterface {
 
 	std::shared_timed_mutex databaseMutex;
 
-public:
 	std::string error_message = "undefined_error";
 	Entry error_entry;
+
+public:
 
 	Database() {
 		error_entry.set_value("Error");
 	}
 
-	bool CreateTable(std::string name, std::vector<std::string> keys) override
+	void Save() override  {
+		for (auto table : tables) {
+			table.second->Save();
+		}
+	}
+
+	void Load() override {
+		std::string path = "D:\\DatabaseDS\\Debug";
+		auto table_names = get_all_files_names_within_folder(path);
+		for (auto const& table_name_local : table_names) {
+			auto table = new Table();
+			table->Load(table_name_local);
+			tables[table_name_local.substr(0, table_name_local.size() - 5)] = table;
+		}
+	}
+
+	bool CreateTable(const std::string name, const std::vector<std::string> keys) override
 	{
 		std::lock_guard<std::shared_timed_mutex> writerLock(databaseMutex);
 
@@ -288,7 +510,7 @@ public:
 		return true;
 	}
 
-	bool DeleteTable(std::string name) override
+	bool DeleteTable(const std::string name) override
 	{
 		std::lock_guard<std::shared_timed_mutex> writerLock(databaseMutex);
 
@@ -300,7 +522,7 @@ public:
 		return true;
 	}
 
-	Entry GetFirstEntry(std::string name, std::string key_name, bool sort_order) override
+	Entry GetFirstEntry(const std::string name, const std::string key_name, const bool sort_order) override
 	{
 		std::shared_lock<std::shared_timed_mutex> readerLock(databaseMutex);
 
@@ -312,7 +534,7 @@ public:
 		return tables[name]->GetEntrySorted(true, sort_order, key_name);
 	}
 
-	Entry GetLastEntry(std::string name, std::string key_name, bool sort_order) override
+	Entry GetLastEntry(const std::string name, const std::string key_name, const bool sort_order) override
 	{
 		std::shared_lock<std::shared_timed_mutex> readerLock(databaseMutex);
 
@@ -323,7 +545,7 @@ public:
 		return tables[name]->GetEntrySorted(false, sort_order, key_name);
 	}
 
-	Entry GetEntry(std::string name, std::string key_name, std::string key_value) override
+	Entry GetEntry(const std::string name, const std::string key_name, const std::string key_value) override
 	{
 		std::shared_lock<std::shared_timed_mutex> readerLock(databaseMutex);
 
@@ -334,19 +556,19 @@ public:
 		return tables[name]->GetEntry(key_name, key_value);
 	}
 
-	Entry GetNextEntry(Entry entry) override
+	Entry GetNextEntry(const Entry entry) override
 	{
 		std::shared_lock<std::shared_timed_mutex> readerLock(databaseMutex);
 		return entry.sort() ? tables[entry.table_name()]->GetPrevEntry(entry) : tables[entry.table_name()]->GetNextEntry(entry);
 	}
 
-	Entry GetPrevEntry(Entry entry) override
+	Entry GetPrevEntry(const Entry entry) override
 	{
 		std::shared_lock<std::shared_timed_mutex> readerLock(databaseMutex);
 		return entry.sort() ? tables[entry.table_name()]->GetNextEntry(entry) : tables[entry.table_name()]->GetPrevEntry(entry);
 	}
 
-	bool AddEntry(std::string table_name, std::vector<KeyValue> keys, std::string value) override
+	bool AddEntry(const std::string table_name, const std::vector<KeyValue> keys, const std::string value) override
 	{
 		std::shared_lock<std::shared_timed_mutex> readerLock(databaseMutex);
 
@@ -357,7 +579,7 @@ public:
 		return tables[table_name]->CreateEntry(keys, value);
 	}
 
-	bool DeleteCurrentEntry(Entry entry) override
+	bool DeleteCurrentEntry(const Entry entry) override
 	{
 		std::shared_lock<std::shared_timed_mutex> readerLock(databaseMutex);
 
@@ -375,7 +597,27 @@ public:
 
 private:
 
-	bool HasTable(std::string table_name) {
+	bool HasTable(const std::string table_name) {
 		return tables.find(table_name) != tables.end();
+	}
+
+	std::vector<std::string> get_all_files_names_within_folder(const std::string folder)
+	{
+		std::vector<std::string> names;
+		std::string search_path = folder + "\\*.data*";
+		WIN32_FIND_DATAA fd;
+		HANDLE hFind = ::FindFirstFileA(search_path.c_str(), &fd);
+		if (hFind != INVALID_HANDLE_VALUE) {
+			do {
+				// read all (real) files in current folder
+				// , delete '!' read other 2 default folder . and ..
+				if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+					names.push_back(fd.cFileName);
+				}
+			} while (::FindNextFileA(hFind, &fd));
+			::FindClose(hFind);
+		}
+
+		return names;
 	}
 };

@@ -84,10 +84,10 @@ TEST(TestCaseName4, TestName4)
 	Entry next_entry = database->GetPrevEntry(return_entry);
 
 	Entry entry;
-	entry.set_value("my_value_1");
+	entry.set_value("my_value_2");
 	entry.set_table_name("table1");
 	entry.set_key_name("key1");
-	entry.set_key_value("value1_1");
+	entry.set_key_value("value1_2");
 	entry.set_sort(true);
 
 	bool result = next_entry.key_value() == entry.key_value() &&
@@ -95,4 +95,32 @@ TEST(TestCaseName4, TestName4)
 		next_entry.key_name() == entry.key_name();
 
 	EXPECT_EQ(true, result);
+}
+
+TEST(TestCaseName5, TestName5)
+{
+	DatabaseInterface* database = new Database();
+	vector<string> keyss{ "key1", "key2" };
+	database->CreateTable("table1", keyss);
+
+	vector<KeyValue> keys;
+	KeyValue key_value;
+	key_value.set_name("key1");
+	key_value.set_value("value1_1");
+	keys.push_back(key_value);
+	database->AddEntry("table1", keys, "my_value_1");
+
+	vector<KeyValue> keys2;
+	KeyValue key_value2;
+	key_value2.set_name("key1");
+	key_value2.set_value("value1_2");
+	keys2.push_back(key_value2);
+	database->AddEntry("table1", keys2, "my_value_2");
+
+	database->Save();
+
+	DatabaseInterface* database1 = new Database();
+	database1->Load();
+
+	EXPECT_EQ(database->GetEntry("table1", "key1", "value1_1").value(), database1->GetEntry("table1", "key1", "value1_1").value());
 }

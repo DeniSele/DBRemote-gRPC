@@ -100,6 +100,9 @@ public:
 	DatabaseInterface(){}
 	virtual ~DatabaseInterface(){}
 
+	virtual void Save() = 0;
+	virtual void Load() = 0;
+
 	virtual std::string GetErrorString() = 0;
 
 	virtual bool CreateTable(std::string name, std::vector<std::string> keys) = 0;
